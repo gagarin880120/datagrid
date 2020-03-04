@@ -1,7 +1,9 @@
 import { createStore } from 'redux';
+import students from '../api/students';
 
 const initialState = {
-
+  students: students.data,
+  isSortedBy: 'id',
 }
 
 function reducer(state = initialState, action) {
