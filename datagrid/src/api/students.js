@@ -14,7 +14,7 @@ export const makeFake = (idx) => {
   };
 };
 
-const data = [...new Array(20)].map((_, idx) => makeFake(idx));
+const data = [...new Array(30)].map((_, idx) => makeFake(idx));
 
 export default {
   "data": data
