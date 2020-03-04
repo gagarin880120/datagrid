@@ -1,0 +1,9 @@
+.wrapper {
+  display: grid;
+  grid-template-columns: 30px repeat(4, 1fr) 80px 50px;
+  grid-template-rows: 1fr;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  border-bottom: 1px solid rgb(73, 71, 71);
+  font-weight: bold;
+}
