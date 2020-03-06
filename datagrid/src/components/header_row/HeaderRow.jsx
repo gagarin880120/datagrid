@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import styles from './HeaderRow.module.css';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Modal from 'react-modal';
 
-export default function HeaderRow() {
-  const students = useSelector(state => state.students);
+Modal.setAppElement('#root');
+
+export default function HeaderRow(props) {
   const dispatch = useDispatch();
   const [activeArrowId, setActiveArrowId] = useState('arrow1');
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [request, setRequest] = useState('');
+  const [activeModalId, setActiveModalId] = useState('');
 
   function openModal() {
     setIsOpen(true);
   }
 
-  function closeModal(){
+  function closeModal() {
     setIsOpen(false);
   }
 
@@ -31,38 +32,6 @@ export default function HeaderRow() {
     })
   }
 
-  function sortDataUpward(category) {
-    const array = students;
-    array.sort((a, b) => a[category] > b[category] ? 1 : a[category] < b[category] ? -1 : 0)
-    return dispatch({
-      type: 'CHANGE_FIELD',
-      payload: {
-        students: [...array]
-      }
-    })
-  }
-
-  function sortDataDownward(category) {
-    const array = students;
-    array.sort((a, b) => a[category] > b[category] ? -1 : a[category] < b[category] ? 1 : 0)
-    return dispatch({
-      type: 'CHANGE_FIELD',
-      payload: {
-        students: [...array]
-      }
-    })
-  }
-
-  function filterByRequest(str, field) {
-    const array = students.filter(item => item[field].toLowerCase().includes(str))
-    return dispatch({
-      type: 'CHANGE_FIELD',
-      payload: {
-        students: array
-      }
-    })
-  }
-
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
@@ -71,8 +40,8 @@ export default function HeaderRow() {
           className={styles.arrow}
           id="arrow1"
           style={activeArrowId === 'arrow1' ? activeArrowStyles : null}
-          onClick={(e) => {
-            sortDataUpward('id'); 
+          onClick={() => {
+            props.sortDataUpward('id'); 
             changeField('isSortedBy', 'id');
             setActiveArrowId('arrow1');
           }}
@@ -81,8 +50,8 @@ export default function HeaderRow() {
           className={styles.arrow}
           id="arrow2"
           style={activeArrowId === 'arrow2' ? activeArrowStyles : null}
-          onClick={(e) => {
-            sortDataDownward('id'); 
+          onClick={() => {
+            props.sortDataDownward('id'); 
             changeField('isSortedBy', 'id');
             setActiveArrowId('arrow2');
           }}
@@ -95,7 +64,7 @@ export default function HeaderRow() {
           style={activeArrowId === 'arrow3' ? activeArrowStyles : null}
           id="arrow3" 
           onClick={() => {
-            sortDataUpward('name'); 
+            props.sortDataUpward('name'); 
             changeField('isSortedBy', 'name');
             setActiveArrowId('arrow3');
           }}
@@ -105,32 +74,63 @@ export default function HeaderRow() {
           id="arrow4"
           style={activeArrowId === 'arrow4' ? activeArrowStyles : null}
           onClick={() => {
-            sortDataDownward('name');
+            props.sortDataDownward('name');
             changeField('isSortedBy', 'name');
             setActiveArrowId('arrow4');
           }}
         >▼</span>
         <Modal
-          isOpen={modalIsOpen}
+          isOpen={(modalIsOpen && activeModalId === 'modal1') ? true : false}
+          id="modal1"
           onRequestClose={closeModal}
+          className={styles.modal}
+          overlayClassName={styles.overlay}
+          style={{
+            content: {
+              top: '23px',
+              left: '60px'
+            }
+          }}
         >
           <input
             type="text"
-            value={request}
-            onChange={(e) => setRequest(e.target.value)}
+            value={props.request.name}
+            onChange={(e) => props.setRequest({
+              name: e.target.value,
+              github: props.request.github,
+              email: props.request.email,
+              location: props.request.location
+            })}
           />
+          <br />
           <button
+            className={styles.modalButton}
             onClick={() => {
-              filterByRequest(request, 'name');
+              props.filterByRequest(props.request.name, 'name');
               closeModal();
             }}
           >
             search
           </button>
+          <button
+            className={styles.modalButton}
+            onClick={() => {
+              props.filterByRequest('', 'name');
+              setActiveArrowId('arrow1');
+              changeField('isSortedBy', 'id');
+              closeModal();
+              props.setIsChecked(false);
+            }}
+          >
+            reset
+          </button>
         </Modal>
         <button
           className={styles.search}
-          onClick={openModal}
+          onClick={() => {
+            setActiveModalId('modal1');
+            openModal();
+          }}
         >
           <i className="fas fa-search"></i>
         </button>
@@ -142,7 +142,7 @@ export default function HeaderRow() {
           id="arrow5"
           style={activeArrowId === 'arrow5' ? activeArrowStyles : null}
           onClick={() => {
-            sortDataUpward('github');
+            props.sortDataUpward('github');
             changeField('isSortedBy', 'github');
             setActiveArrowId('arrow5');
           }}
@@ -152,11 +152,66 @@ export default function HeaderRow() {
           id="arrow6"
           style={activeArrowId === 'arrow6' ? activeArrowStyles : null}
           onClick={() => {
-            sortDataDownward('github');
+            props.sortDataDownward('github');
             changeField('isSortedBy', 'github');
             setActiveArrowId('arrow6');
           }}
         >▼</span>
+        <Modal
+          isOpen={(modalIsOpen && activeModalId === 'modal2') ? true : false}
+          onRequestClose={closeModal}
+          className={styles.modal}
+          id="modal2"
+          overlayClassName={styles.overlay}
+          style={{
+            content: {
+              top: '23px',
+              left: '290px'
+            }
+          }}
+        >
+          <input
+            type="text"
+            value={props.request.github}
+            onChange={(e) => props.setRequest({
+              name: props.request.name,
+              github: e.target.value,
+              email: props.request.email,
+              location: props.request.location
+            })}
+          />
+          <br />
+          <button
+            className={styles.modalButton}
+            onClick={() => {
+              props.filterByRequest(props.request.github, 'github');
+              closeModal();
+            }}
+          >
+            search
+          </button>
+          <button
+            className={styles.modalButton}
+            onClick={() => {
+              props.filterByRequest('', 'github');
+              setActiveArrowId('arrow1');
+              changeField('isSortedBy', 'id');
+              closeModal();
+              props.setIsChecked(false);
+            }}
+          >
+            reset
+          </button>
+        </Modal>
+        <button
+          className={styles.search}
+          onClick={() => {
+            setActiveModalId('modal2');
+            openModal();
+          }}
+        >
+          <i className="fas fa-search"></i>
+        </button>
       </div>
       <div className={styles.header}>
         email
@@ -165,7 +220,7 @@ export default function HeaderRow() {
           style={activeArrowId === 'arrow7' ? activeArrowStyles : null}
           id="arrow7"
           onClick={() => {
-            sortDataUpward('email');
+            props.sortDataUpward('email');
             changeField('isSortedBy', 'email');
             setActiveArrowId('arrow7');
           }}
@@ -175,11 +230,66 @@ export default function HeaderRow() {
           id="arrow8"
           style={activeArrowId === 'arrow8' ? activeArrowStyles : null}
           onClick={() => {
-            sortDataDownward('email');
+            props.sortDataDownward('email');
             changeField('isSortedBy', 'email');
             setActiveArrowId('arrow8');
           }}
         >▼</span>
+        <Modal
+          isOpen={(modalIsOpen && activeModalId === 'modal3') ? true : false}
+          onRequestClose={closeModal}
+          className={styles.modal}
+          id="modal3"
+          overlayClassName={styles.overlay}
+          style={{
+            content: {
+              top: '23px',
+              left: '660px'
+            }
+          }}
+        >
+          <input
+            type="text"
+            value={props.request.email}
+            onChange={(e) => props.setRequest({
+              name: props.request.name,
+              github: props.request.github,
+              email: e.target.value,
+              location: props.request.location
+            })}
+          />
+          <br />
+          <button
+            className={styles.modalButton}
+            onClick={() => {
+              props.filterByRequest(props.request.email, 'email');
+              closeModal();
+            }}
+          >
+            search
+          </button>
+          <button
+            className={styles.modalButton}
+            onClick={() => {
+              props.filterByRequest('', 'email');
+              setActiveArrowId('arrow1');
+              changeField('isSortedBy', 'id');
+              closeModal();
+              props.setIsChecked(false);
+            }}
+          >
+            reset
+          </button>
+        </Modal>
+        <button
+          className={styles.search}
+          onClick={() => {
+            setActiveModalId('modal3');
+            openModal();
+          }}
+        >
+          <i className="fas fa-search"></i>
+        </button>
       </div>
       <div className={styles.header}>
         Location
@@ -188,7 +298,7 @@ export default function HeaderRow() {
           id="arrow9"
           style={activeArrowId === 'arrow9' ? activeArrowStyles : null}
           onClick={() => {
-            sortDataUpward('location');
+            props.sortDataUpward('location');
             changeField('isSortedBy', 'location');
             setActiveArrowId('arrow9');
           }}
@@ -198,37 +308,87 @@ export default function HeaderRow() {
           id="arrow10"
           style={activeArrowId === 'arrow10' ? activeArrowStyles : null}
           onClick={() => {
-            sortDataDownward('location');
+            props.sortDataDownward('location');
             changeField('isSortedBy', 'location');
             setActiveArrowId('arrow10');
           }}
         >▼</span>
+
+        <Modal
+          isOpen={(modalIsOpen && activeModalId === 'modal4') ? true : false}
+          onRequestClose={closeModal}
+          className={styles.modal}
+          id="modal4"
+          overlayClassName={styles.overlay}
+          style={{
+            content: {
+              top: '23px',
+              right: '210px'
+            }
+          }}
+        >
+          <input
+            type="text"
+            value={props.request.location}
+            onChange={(e) => props.setRequest({
+              name: props.request.name,
+              github: props.request.github,
+              email: props.request.email,
+              location: e.target.value
+            })}
+          />
+          <br />
+          <button
+            className={styles.modalButton}
+            onClick={() => {
+              props.filterByRequest(props.request.location, 'location');
+              closeModal();
+            }}
+          >
+            search
+          </button>
+          <button
+            className={styles.modalButton}
+            onClick={() => {
+              props.filterByRequest('', 'location');
+              setActiveArrowId('arrow1');
+              changeField('isSortedBy', 'id');
+              closeModal();
+              props.setIsChecked(false);
+            }}
+          >
+            reset
+          </button>
+        </Modal>
+        <button
+          className={styles.search}
+          onClick={() => {
+            setActiveModalId('modal4');
+            openModal();
+          }}
+        >
+          <i className="fas fa-search"></i>
+        </button>
       </div>
       <div className={styles.header}>
         Role
-        <span 
-          className={styles.arrow}
-          id="arrow11"
-          style={activeArrowId === 'arrow11' ? activeArrowStyles : null}
-          onClick={() => {
-            sortDataUpward('role');
-            changeField('isSortedBy', 'role');
-            setActiveArrowId('arrow11');
-          }}
-        >▲</span>
-        <span 
-          className={styles.arrow}
-          id="arrow12"
-          style={activeArrowId === 'arrow12' ? activeArrowStyles : null}
-          onClick={() => {
-            sortDataDownward('role');
-            changeField('isSortedBy', 'role');
-            setActiveArrowId('arrow12');
-          }}
-        >▼</span>
+        <select
+          value={props.selectValue}
+          onChange={props.handleSelectChange}
+        >
+          <option value="all">all</option>
+          <option value="mentor">mentor</option>
+          <option value="activist">activist</option>
+          <option value="student">student</option>
+        </select>
       </div>
       <div className={styles.header}>
         Active
+        <input
+          type="checkbox"
+          checked={props.isChecked}
+          onChange={props.handleCheckboxChange}
+        />
       </div>
     </div>
   )

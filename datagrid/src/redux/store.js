@@ -3,6 +3,7 @@ import students from '../api/students';
 
 const initialState = {
   students: students.data,
+  currentStudentsData: students.data,
   isSortedBy: 'id',
 }
 
