@@ -10,7 +10,7 @@ export default function HeaderRow(props) {
   }
 
   return (
-    <div className={styles.wrapper}>
+    <div style={props.style} className={styles.wrapper}>
       <div className={styles.item} style={isSortedBy === 'id' ? activeItemStyles: null}>{props.id}</div>
       <div className={styles.item} style={isSortedBy === 'name' ? activeItemStyles: null}>{props.name}</div>
       <div className={styles.item} style={isSortedBy === 'github' ? activeItemStyles: null}>{props.github}</div>

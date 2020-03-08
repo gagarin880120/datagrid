@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import styles from "./Table.module.css";
 import HeaderRow from "../../components/header_row/HeaderRow";
 import Row from "../../components/row/Row";
+import { FixedSizeList } from 'react-window';
 
 function Table() {
   const students = useSelector(state => state.students);
@@ -199,24 +200,19 @@ function Table() {
     setCurrentStudentsList(array);
   }
 
-  useEffect(() => {
-    setRows(
-      currentStudentsList.map(item => {
-        return (
-          <Row
-            key={item.id}
-            id={item.id}
-            name={item.name}
-            github={item.github}
-            email={item.email}
-            location={item.location}
-            role={item.role}
-            isActive={item.isActive}
-          />
-        );
-      })
-    );
-  }, [currentStudentsList]);
+  const ListRow = ({ index, style }) => (
+    <Row
+      style={style}
+      key={currentStudentsList[index].id}
+      id={currentStudentsList[index].id}
+      name={currentStudentsList[index].name}
+      github={currentStudentsList[index].github}
+      email={currentStudentsList[index].email}
+      location={currentStudentsList[index].location}
+      role={currentStudentsList[index].role}
+      isActive={currentStudentsList[index].isActive}
+    />
+  );
 
   return (
     <div className={styles.wrapper}>
@@ -234,7 +230,14 @@ function Table() {
         onSearchButtonClick={onSearchButtonClick}
         onResetButtonClick={onResetButtonClick}
       />
-      {rows}
+      <FixedSizeList
+        height={500}
+        width={1250}
+        itemSize={20}
+        itemCount={currentStudentsList.length}
+      >
+        {ListRow}
+      </FixedSizeList>
     </div>
   );
 }
