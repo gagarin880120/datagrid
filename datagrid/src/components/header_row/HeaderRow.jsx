@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import styles from './HeaderRow.module.css';
-import { useDispatch } from 'react-redux';
 import Modal from 'react-modal';
 
 Modal.setAppElement('#root');
 
 export default function HeaderRow(props) {
-  const dispatch = useDispatch();
   const [activeArrowId, setActiveArrowId] = useState('arrow1');
   const [modalIsOpen, setIsOpen] = useState(false);
   const [activeModalId, setActiveModalId] = useState('');
@@ -23,15 +21,6 @@ export default function HeaderRow(props) {
     color: 'red'
   }
 
-  function changeField(field, value) {
-    return dispatch({
-      type: 'CHANGE_FIELD',
-      payload: {
-        [field]: value
-      }
-    })
-  }
-
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
@@ -41,8 +30,7 @@ export default function HeaderRow(props) {
           id="arrow1"
           style={activeArrowId === 'arrow1' ? activeArrowStyles : null}
           onClick={() => {
-            props.sortDataUpward('id'); 
-            changeField('isSortedBy', 'id');
+            props.sortDataUpward('id');
             setActiveArrowId('arrow1');
           }}
         >▲</span>
@@ -51,8 +39,7 @@ export default function HeaderRow(props) {
           id="arrow2"
           style={activeArrowId === 'arrow2' ? activeArrowStyles : null}
           onClick={() => {
-            props.sortDataDownward('id'); 
-            changeField('isSortedBy', 'id');
+            props.sortDataDownward('id');
             setActiveArrowId('arrow2');
           }}
         >▼</span>
@@ -64,8 +51,7 @@ export default function HeaderRow(props) {
           style={activeArrowId === 'arrow3' ? activeArrowStyles : null}
           id="arrow3" 
           onClick={() => {
-            props.sortDataUpward('name'); 
-            changeField('isSortedBy', 'name');
+            props.sortDataUpward('name');
             setActiveArrowId('arrow3');
           }}
         >▲</span>
@@ -74,8 +60,7 @@ export default function HeaderRow(props) {
           id="arrow4"
           style={activeArrowId === 'arrow4' ? activeArrowStyles : null}
           onClick={() => {
-            props.sortDataDownward('name');
-            changeField('isSortedBy', 'name');
+            props.sortDataDownward('name')
             setActiveArrowId('arrow4');
           }}
         >▼</span>
@@ -106,7 +91,7 @@ export default function HeaderRow(props) {
           <button
             className={styles.modalButton}
             onClick={() => {
-              props.filterByRequest(props.request.name, 'name');
+              props.onSearchButtonClick('name');
               closeModal();
             }}
           >
@@ -115,11 +100,8 @@ export default function HeaderRow(props) {
           <button
             className={styles.modalButton}
             onClick={() => {
-              props.filterByRequest('', 'name');
-              setActiveArrowId('arrow1');
-              changeField('isSortedBy', 'id');
+              props.onResetButtonClick('name');
               closeModal();
-              props.setIsChecked(false);
             }}
           >
             reset
@@ -143,7 +125,6 @@ export default function HeaderRow(props) {
           style={activeArrowId === 'arrow5' ? activeArrowStyles : null}
           onClick={() => {
             props.sortDataUpward('github');
-            changeField('isSortedBy', 'github');
             setActiveArrowId('arrow5');
           }}
         >▲</span>
@@ -153,7 +134,6 @@ export default function HeaderRow(props) {
           style={activeArrowId === 'arrow6' ? activeArrowStyles : null}
           onClick={() => {
             props.sortDataDownward('github');
-            changeField('isSortedBy', 'github');
             setActiveArrowId('arrow6');
           }}
         >▼</span>
@@ -184,7 +164,7 @@ export default function HeaderRow(props) {
           <button
             className={styles.modalButton}
             onClick={() => {
-              props.filterByRequest(props.request.github, 'github');
+              props.onSearchButtonClick('github');
               closeModal();
             }}
           >
@@ -193,11 +173,8 @@ export default function HeaderRow(props) {
           <button
             className={styles.modalButton}
             onClick={() => {
-              props.filterByRequest('', 'github');
-              setActiveArrowId('arrow1');
-              changeField('isSortedBy', 'id');
+              props.onResetButtonClick('github');
               closeModal();
-              props.setIsChecked(false);
             }}
           >
             reset
@@ -221,7 +198,6 @@ export default function HeaderRow(props) {
           id="arrow7"
           onClick={() => {
             props.sortDataUpward('email');
-            changeField('isSortedBy', 'email');
             setActiveArrowId('arrow7');
           }}
         >▲</span>
@@ -231,7 +207,6 @@ export default function HeaderRow(props) {
           style={activeArrowId === 'arrow8' ? activeArrowStyles : null}
           onClick={() => {
             props.sortDataDownward('email');
-            changeField('isSortedBy', 'email');
             setActiveArrowId('arrow8');
           }}
         >▼</span>
@@ -262,7 +237,7 @@ export default function HeaderRow(props) {
           <button
             className={styles.modalButton}
             onClick={() => {
-              props.filterByRequest(props.request.email, 'email');
+              props.onSearchButtonClick('email');
               closeModal();
             }}
           >
@@ -271,11 +246,8 @@ export default function HeaderRow(props) {
           <button
             className={styles.modalButton}
             onClick={() => {
-              props.filterByRequest('', 'email');
-              setActiveArrowId('arrow1');
-              changeField('isSortedBy', 'id');
+              props.onResetButtonClick('email');
               closeModal();
-              props.setIsChecked(false);
             }}
           >
             reset
@@ -299,7 +271,6 @@ export default function HeaderRow(props) {
           style={activeArrowId === 'arrow9' ? activeArrowStyles : null}
           onClick={() => {
             props.sortDataUpward('location');
-            changeField('isSortedBy', 'location');
             setActiveArrowId('arrow9');
           }}
         >▲</span>
@@ -309,7 +280,6 @@ export default function HeaderRow(props) {
           style={activeArrowId === 'arrow10' ? activeArrowStyles : null}
           onClick={() => {
             props.sortDataDownward('location');
-            changeField('isSortedBy', 'location');
             setActiveArrowId('arrow10');
           }}
         >▼</span>
@@ -341,7 +311,7 @@ export default function HeaderRow(props) {
           <button
             className={styles.modalButton}
             onClick={() => {
-              props.filterByRequest(props.request.location, 'location');
+              props.onSearchButtonClick('location');
               closeModal();
             }}
           >
@@ -350,11 +320,8 @@ export default function HeaderRow(props) {
           <button
             className={styles.modalButton}
             onClick={() => {
-              props.filterByRequest('', 'location');
-              setActiveArrowId('arrow1');
-              changeField('isSortedBy', 'id');
+              props.onResetButtonClick('location');
               closeModal();
-              props.setIsChecked(false);
             }}
           >
             reset

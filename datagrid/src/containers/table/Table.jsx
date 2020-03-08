@@ -1,137 +1,226 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import styles from './Table.module.css';
-import HeaderRow from '../../components/header_row/HeaderRow';
-import Row from '../../components/row/Row';
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import styles from "./Table.module.css";
+import HeaderRow from "../../components/header_row/HeaderRow";
+import Row from "../../components/row/Row";
 
 function Table() {
   const students = useSelector(state => state.students);
+  const isSorted = useSelector(state => state.isSorted);
+  const dispatch = useDispatch();
   const [currentStudentsList, setCurrentStudentsList] = useState(students);
   const [rows, setRows] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
   const [isFilteredByRole, setIsFilteredByRole] = useState(false);
-  const [roleFilteredBy, setRoleFilteredBy] = useState('');
-  const [selectValue, setSelectValue] = useState('');
+  const [roleFilteredBy, setRoleFilteredBy] = useState("");
+  const [selectValue, setSelectValue] = useState("");
   const [request, setRequest] = useState({
-    name: '',
-    github: '',
-    email: '',
-    location: ''
+    name: "",
+    github: "",
+    email: "",
+    location: ""
   });
   const [isFilteredByString, setIsFilteredByString] = useState(false);
-  const [stringFieldFilteredBy, setStringFieldFilteredBy] = useState('');
+  const [stringFieldFilteredBy, setStringFieldFilteredBy] = useState("");
+
+  function changeField(field, value) {
+    return dispatch({
+      type: "CHANGE_FIELD",
+      payload: {
+        [field]: value
+      }
+    });
+  }
 
   function sortDataUpward(category) {
+    changeField("isSortedBy", category);
     const array = currentStudentsList;
-    array.sort((a, b) => a[category] > b[category] ? 1 : a[category] < b[category] ? -1 : 0);
+    array.sort((a, b) =>
+      a[category] > b[category] ? 1 : a[category] < b[category] ? -1 : 0
+    );
     setCurrentStudentsList([...array]);
   }
 
   function sortDataDownward(category) {
+    changeField("isSortedBy", category);
     const array = currentStudentsList;
-    array.sort((a, b) => a[category] > b[category] ? -1 : a[category] < b[category] ? 1 : 0);
+    array.sort((a, b) =>
+      a[category] > b[category] ? -1 : a[category] < b[category] ? 1 : 0
+    );
     setCurrentStudentsList([...array]);
   }
 
-  function filterByRequest(request, field) {
+  function filterByRequest(str, field) {
     setIsFilteredByString(true);
-    setStringFieldFilteredBy(field);
-    const array = students.filter(item => item[field].toLowerCase().includes(request));
-    setCurrentStudentsList(array);
+    const array = students.filter(item => item[field].toLowerCase().includes(str));
+    return array;
   }
 
   function filterByRole(arr, str) {
     let array = [];
     setIsFilteredByRole(true);
-    if (str === 'all') {
+    if (str === "all") {
       array = arr;
     } else {
       array = arr.filter(item => item.role === str);
     }
-    setCurrentStudentsList(array);
+    
     return array;
+  }
+
+  function onSearchButtonClick(field) {
+    setStringFieldFilteredBy(field);
+    let array = filterByRequest(request[field], field);
+    if (isChecked && isFilteredByRole) {
+      array = filterByRole(array, roleFilteredBy).filter(item => item.isActive)
+    } else if (isChecked) {
+      array = array.filter(item => item.isActive)
+    } else if (isFilteredByRole) {
+      array = filterByRole(array, roleFilteredBy)
+    }
+    setCurrentStudentsList(array);
+  }
+
+  function onResetButtonClick(field) {
+    setRequest(Object.assign({[field]: ''}));
+    let array = filterByRequest('', field);
+    if (isChecked && isFilteredByRole) {
+      array = filterByRole(array, roleFilteredBy).filter(item => item.isActive)
+    } else if (isChecked) {
+      array = array.filter(item => item.isActive)
+    } else if (isFilteredByRole) {
+      array = filterByRole(array, roleFilteredBy)
+    }
+    setCurrentStudentsList(array);
   }
 
   function handleCheckboxChange(e) {
     setIsChecked(e.target.checked);
-    if (isFilteredByRole) {
+    let array = [];
+    if (isFilteredByRole && isFilteredByString) {
+      array = filterByRole(
+        filterByRequest(request[stringFieldFilteredBy], stringFieldFilteredBy),
+        roleFilteredBy
+      );
       if (e.target.checked) {
-        filterByRole(students, roleFilteredBy);
-        setCurrentStudentsList(currentStudentsList.filter(item => item.isActive))
-      } else {
-        filterByRole(students, roleFilteredBy);
+        array = array.filter(item => item.isActive);
+      }
+    } else if (isFilteredByRole) {
+      array = filterByRole(students, roleFilteredBy);
+      if (e.target.checked) {
+        array = array.filter(item => item.isActive);
+      }
+    } else if (isFilteredByString) {
+      array = filterByRequest(
+        request[stringFieldFilteredBy],
+        stringFieldFilteredBy
+      )
+      if (e.target.checked) {
+        array = array.filter(item => item.isActive);
       }
     } else {
+      array = students;
       if (e.target.checked) {
-        setCurrentStudentsList(currentStudentsList.filter(item => item.isActive))
-      } else {
-        setCurrentStudentsList(students);
+        array = array.filter(item => item.isActive);
       }
     }
+    setCurrentStudentsList(array);
   }
 
   function handleSelectChange(e) {
     setSelectValue(e.target.value);
-    if (isFilteredByString) {
-      if (e.target.value === 'mentor') {
-        setCurrentStudentsList(currentStudentsList.filter(item => item.role === 'mentor'));
-      } else if (e.target.value === 'activist') {
-        setCurrentStudentsList(currentStudentsList.filter(item => item.role === 'activist'));
+    let array = [];
+    if (isFilteredByString && isChecked) {
+      array = filterByRequest(
+        request[stringFieldFilteredBy],
+        stringFieldFilteredBy
+      );
+      if (e.target.value === "mentor") {
+        setRoleFilteredBy("mentor");
+        array = filterByRole(array, "mentor").filter(item => item.isActive);
+      } else if (e.target.value === "activist") {
+        setRoleFilteredBy("activist");
+        array = filterByRole(array, "activist").filter(item => item.isActive);
+      } else if (e.target.value === "student") {
+        setRoleFilteredBy("student");
+        array = filterByRole(array, "student").filter(item => item.isActive);
       } else {
-        setCurrentStudentsList(currentStudentsList.filter(item => item.role === 'student'));
+        setRoleFilteredBy("all");
+        array = filterByRole(array, "all").filter(item => item.isActive);
+      }
+      
+    } else if (isFilteredByString) {
+      array = filterByRequest(
+        request[stringFieldFilteredBy],
+        stringFieldFilteredBy
+      );
+      if (e.target.value === "mentor") {
+        setRoleFilteredBy("mentor");
+        array = filterByRole(array, "mentor");
+      } else if (e.target.value === "activist") {
+        setRoleFilteredBy("activist");
+        array = filterByRole(array, "activist");
+      } else if (e.target.value === "student") {
+        setRoleFilteredBy("student");
+        array = filterByRole(array, "student");
+      } else {
+        setRoleFilteredBy("all");
+        array = filterByRole(array, "all");
       }
     } else if (isChecked) {
-      console.log('hi')
-      if (e.target.value === 'mentor') {
-        setRoleFilteredBy('mentor');
-        setCurrentStudentsList(filterByRole(students, 'mentor').filter(item => item.isActive));
-      } else if (e.target.value === 'activist') {
-        setRoleFilteredBy('activist');
-        setCurrentStudentsList(filterByRole(students, 'activist').filter(item => item.isActive));
-      } else if (e.target.value === 'student') {
-        setRoleFilteredBy('student');
-        setCurrentStudentsList(filterByRole(students, 'student').filter(item => item.isActive));
+      if (e.target.value === "mentor") {
+        setRoleFilteredBy("mentor");
+        array = filterByRole(students, "mentor").filter(item => item.isActive);
+      } else if (e.target.value === "activist") {
+        setRoleFilteredBy("activist");
+        array = filterByRole(students, "activist").filter(item => item.isActive);
+      } else if (e.target.value === "student") {
+        setRoleFilteredBy("student");
+        array = filterByRole(students, "student").filter(item => item.isActive);
       } else {
-        setRoleFilteredBy('all');
-        setCurrentStudentsList(filterByRole(students, 'all').filter(item => item.isActive));
+        setRoleFilteredBy("all");
+        array = filterByRole(students, "all").filter(item => item.isActive);
       }
     } else {
-      if (e.target.value === 'mentor') {
-        setRoleFilteredBy('mentor');
-        filterByRole(students, 'mentor');
-      } else if (e.target.value === 'activist') {
-        setRoleFilteredBy('activist');
-        filterByRole(students, 'activist');
-      } else if (e.target.value === 'student') {
-        setRoleFilteredBy('student');
-        filterByRole(students, 'student');
+      if (e.target.value === "mentor") {
+        setRoleFilteredBy("mentor");
+        array = filterByRole(students, "mentor");
+      } else if (e.target.value === "activist") {
+        setRoleFilteredBy("activist");
+        array = filterByRole(students, "activist");
+      } else if (e.target.value === "student") {
+        setRoleFilteredBy("student");
+        array = filterByRole(students, "student");
       } else {
-        setRoleFilteredBy('all');
-        filterByRole(students, 'all');
+        setRoleFilteredBy("all");
+        array = filterByRole(students, "all");
       }
     }
+    setCurrentStudentsList(array);
   }
 
   useEffect(() => {
-    setRows(currentStudentsList.map(item => {
-      return (
-        <Row 
-          key={item.id} 
-          id={item.id} 
-          name={item.name} 
-          github={item.github}
-          email={item.email}
-          location={item.location}
-          role={item.role}
-          isActive={item.isActive}
-        />
-      )
-    }))
-  }, [currentStudentsList])
+    setRows(
+      currentStudentsList.map(item => {
+        return (
+          <Row
+            key={item.id}
+            id={item.id}
+            name={item.name}
+            github={item.github}
+            email={item.email}
+            location={item.location}
+            role={item.role}
+            isActive={item.isActive}
+          />
+        );
+      })
+    );
+  }, [currentStudentsList]);
 
   return (
     <div className={styles.wrapper}>
-      <HeaderRow 
+      <HeaderRow
         sortDataUpward={sortDataUpward}
         sortDataDownward={sortDataDownward}
         filterByRequest={filterByRequest}
@@ -142,6 +231,8 @@ function Table() {
         setRequest={setRequest}
         selectValue={selectValue}
         handleSelectChange={handleSelectChange}
+        onSearchButtonClick={onSearchButtonClick}
+        onResetButtonClick={onResetButtonClick}
       />
       {rows}
     </div>
