@@ -9,8 +9,17 @@ export default function HeaderRow(props) {
     background: '#7fffd4'
   }
 
+  const activeRowStyles = {
+    background: '#ff00ff'
+  }
+
   return (
-    <div style={props.style} className={styles.wrapper}>
+    <div 
+      id={props.id}
+      style={props.id === Number(props.activeRowId) ? Object.assign(activeRowStyles, props.style) : props.style}
+      className={styles.wrapper} 
+      onClick={props.onRowClick} 
+    >
       <div className={styles.item} style={isSortedBy === 'id' ? activeItemStyles: null}>{props.id}</div>
       <div className={styles.item} style={isSortedBy === 'name' ? activeItemStyles: null}>{props.name}</div>
       <div className={styles.item} style={isSortedBy === 'github' ? activeItemStyles: null}>{props.github}</div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styles from "./Table.module.css";
 import HeaderRow from "../../components/header_row/HeaderRow";
@@ -7,10 +7,9 @@ import { FixedSizeList } from 'react-window';
 
 function Table() {
   const students = useSelector(state => state.students);
-  const isSorted = useSelector(state => state.isSorted);
+  // const isSorted = useSelector(state => state.isSorted);
   const dispatch = useDispatch();
   const [currentStudentsList, setCurrentStudentsList] = useState(students);
-  const [rows, setRows] = useState(null);
   const [isChecked, setIsChecked] = useState(false);
   const [isFilteredByRole, setIsFilteredByRole] = useState(false);
   const [roleFilteredBy, setRoleFilteredBy] = useState("");
@@ -23,6 +22,7 @@ function Table() {
   });
   const [isFilteredByString, setIsFilteredByString] = useState(false);
   const [stringFieldFilteredBy, setStringFieldFilteredBy] = useState("");
+  const [activeRowId, setActiveRowId] = useState(-1);
 
   function changeField(field, value) {
     return dispatch({
@@ -200,9 +200,23 @@ function Table() {
     setCurrentStudentsList(array);
   }
 
+  function onRowClick(e) {
+    setActiveRowId(e.target.parentNode.id)
+  }
+
+  function onKeyDownHandler(e) {
+    if(e.key === 'Delete') {
+      changeField('students', [...students.filter(v => v.id !== Number(activeRowId))])
+      setCurrentStudentsList([...students.filter(v => v.id !== Number(activeRowId))]);
+      setActiveRowId(-1);
+    }
+  }
+
   const ListRow = ({ index, style }) => (
     <Row
       style={style}
+      onRowClick={onRowClick}
+      activeRowId={activeRowId}
       key={currentStudentsList[index].id}
       id={currentStudentsList[index].id}
       name={currentStudentsList[index].name}
@@ -215,7 +229,7 @@ function Table() {
   );
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} onKeyDown={onKeyDownHandler} tabIndex="0">
       <HeaderRow
         sortDataUpward={sortDataUpward}
         sortDataDownward={sortDataDownward}
