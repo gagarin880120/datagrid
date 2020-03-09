@@ -5,6 +5,12 @@ const initialState = {
   students: students.data,
   currentStudentsData: students.data,
   isSortedBy: 'id',
+  isNameColumnVisible: true,
+  isGithubColumnVisible: true,
+  isEmailColumnVisible: true,
+  isLocationColumnVisible: true,
+  isRoleColumnVisible: true,
+  isActiveColumnVisible: true,
 }
 
 function reducer(state = initialState, action) {

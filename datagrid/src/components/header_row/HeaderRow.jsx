@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import styles from './HeaderRow.module.css';
 import Modal from 'react-modal';
+import { useSelector } from 'react-redux';
 
 Modal.setAppElement('#root');
 
 export default function HeaderRow(props) {
+  const isNameColumnVisible = useSelector(state => state.isNameColumnVisible);
+  const isGithubColumnVisible = useSelector(state => state.isGithubColumnVisible);
+  const isEmailColumnVisible = useSelector(state => state.isEmailColumnVisible);
+  const isLocationColumnVisible = useSelector(state => state.isLocationColumnVisible);
+  const isRoleColumnVisible = useSelector(state => state.isRoleColumnVisible);
+  const isActiveColumnVisible = useSelector(state => state.isActiveColumnVisible);
   const [activeArrowId, setActiveArrowId] = useState('arrow1');
   const [modalIsOpen, setIsOpen] = useState(false);
   const [activeModalId, setActiveModalId] = useState('');
@@ -19,6 +26,14 @@ export default function HeaderRow(props) {
 
   const activeArrowStyles = {
     color: 'red'
+  }
+
+  const notVisibleStyles = {
+    display: 'none'
+  }
+
+  const visibleStyles = {
+    display: 'inline'
   }
 
   return (
@@ -44,7 +59,7 @@ export default function HeaderRow(props) {
           }}
         >▼</span>
       </div>
-      <div className={styles.header}>
+      <div className={styles.header} style={isNameColumnVisible ? visibleStyles : notVisibleStyles}>
         Name
         <span 
           className={styles.arrow}
@@ -117,7 +132,7 @@ export default function HeaderRow(props) {
           <i className="fas fa-search"></i>
         </button>
       </div>
-      <div className={styles.header}>
+      <div className={styles.header} style={isGithubColumnVisible ? visibleStyles : notVisibleStyles}>
         github
         <span 
           className={styles.arrow}
@@ -190,7 +205,7 @@ export default function HeaderRow(props) {
           <i className="fas fa-search"></i>
         </button>
       </div>
-      <div className={styles.header}>
+      <div className={styles.header} style={isEmailColumnVisible ? visibleStyles : notVisibleStyles}>
         email
         <span 
           className={styles.arrow}
@@ -263,7 +278,7 @@ export default function HeaderRow(props) {
           <i className="fas fa-search"></i>
         </button>
       </div>
-      <div className={styles.header}>
+      <div className={styles.header} style={isLocationColumnVisible ? visibleStyles : notVisibleStyles}>
         Location
         <span 
           className={styles.arrow}
@@ -337,7 +352,7 @@ export default function HeaderRow(props) {
           <i className="fas fa-search"></i>
         </button>
       </div>
-      <div className={styles.header}>
+      <div className={styles.header} style={isRoleColumnVisible ? visibleStyles : notVisibleStyles}>
         Role
         <select
           value={props.selectValue}
@@ -349,7 +364,7 @@ export default function HeaderRow(props) {
           <option value="student">student</option>
         </select>
       </div>
-      <div className={styles.header}>
+      <div className={styles.header} style={isActiveColumnVisible ? visibleStyles : notVisibleStyles}>
         Active
         <input
           type="checkbox"

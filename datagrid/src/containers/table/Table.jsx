@@ -7,7 +7,6 @@ import { FixedSizeList } from 'react-window';
 
 function Table() {
   const students = useSelector(state => state.students);
-  // const isSorted = useSelector(state => state.isSorted);
   const dispatch = useDispatch();
   const [currentStudentsList, setCurrentStudentsList] = useState(students);
   const [isChecked, setIsChecked] = useState(false);
@@ -252,7 +251,7 @@ function Table() {
       >
         {ListRow}
       </FixedSizeList>
-    </div>
+    </div>  
   );
 }
 
