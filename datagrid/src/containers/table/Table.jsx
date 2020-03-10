@@ -37,22 +37,18 @@ function Table() {
 
   function sortDataUpward(array, category) {
     changeField("isSortedBy", category);
-    // const array = currentStudentsList;
     array.sort((a, b) =>
       a[category] > b[category] ? 1 : a[category] < b[category] ? -1 : 0
     );
     return array;
-    // setCurrentStudentsList([...array]);
   }
 
   function sortDataDownward(array, category) {
     changeField("isSortedBy", category);
-    // const array = currentStudentsList;
     array.sort((a, b) =>
       a[category] > b[category] ? -1 : a[category] < b[category] ? 1 : 0
     );
     return array;
-    // setCurrentStudentsList([...array]);
   }
 
   function filterByRequest(str, field) {
