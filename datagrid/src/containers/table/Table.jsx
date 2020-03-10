@@ -7,6 +7,7 @@ import { FixedSizeList } from 'react-window';
 
 function Table() {
   const students = useSelector(state => state.students);
+  const activeArrowId = useSelector(state => state.activeArrowId);
   const dispatch = useDispatch();
   const [currentStudentsList, setCurrentStudentsList] = useState(students);
   const [isChecked, setIsChecked] = useState(false);
@@ -34,22 +35,24 @@ function Table() {
     });
   }
 
-  function sortDataUpward(category) {
+  function sortDataUpward(array, category) {
     changeField("isSortedBy", category);
-    const array = currentStudentsList;
+    // const array = currentStudentsList;
     array.sort((a, b) =>
       a[category] > b[category] ? 1 : a[category] < b[category] ? -1 : 0
     );
-    setCurrentStudentsList([...array]);
+    return array;
+    // setCurrentStudentsList([...array]);
   }
 
-  function sortDataDownward(category) {
+  function sortDataDownward(array, category) {
     changeField("isSortedBy", category);
-    const array = currentStudentsList;
+    // const array = currentStudentsList;
     array.sort((a, b) =>
       a[category] > b[category] ? -1 : a[category] < b[category] ? 1 : 0
     );
-    setCurrentStudentsList([...array]);
+    return array;
+    // setCurrentStudentsList([...array]);
   }
 
   function filterByRequest(str, field) {
@@ -204,7 +207,7 @@ function Table() {
   function onRowClick(e) {
     setActiveRowId(e.target.parentNode.id);
     if(severalActiveRowsMode) {
-      setActiveRowsArray([...new Set([...activeRowsArray, activeRowId, e.target.parentNode.id])])
+      setActiveRowsArray([...new Set([...activeRowsArray, activeRowId, e.target.parentNode.id])]);
     } else {
       setActiveRowsArray([]);
     }
@@ -212,12 +215,45 @@ function Table() {
 
   function onKeyDownHandler(e) {
     if(e.key === 'Delete') {
+      let array = [];
       if(activeRowsArray.length) {
-        changeField('students', [...students.filter(v => !(activeRowsArray.includes(`${v.id}`)))]);
-        setCurrentStudentsList([...students.filter(v => !(activeRowsArray.includes(`${v.id}`)))]);
+        array = [...students.filter(v => !(activeRowsArray.includes(`${v.id}`)))];
+        changeField('students', array);
+        setCurrentStudentsList(array);
       } else {
-        changeField('students', [...students.filter(v => v.id !== Number(activeRowId))]);
-        setCurrentStudentsList([...students.filter(v => v.id !== Number(activeRowId))]);
+        array = [...students.filter(v => v.id !== Number(activeRowId))];
+        changeField('students', array);
+        setCurrentStudentsList(array);
+        if (activeArrowId === 'arrow1') {
+          setCurrentStudentsList(sortDataUpward(array, 'id'));
+        }
+        if (activeArrowId === 'arrow2') {
+          setCurrentStudentsList(sortDataDownward(array, 'id'));
+        }
+        if (activeArrowId === 'arrow3') {
+          setCurrentStudentsList(sortDataUpward(array, 'name'));
+        }
+        if (activeArrowId === 'arrow4') {
+          setCurrentStudentsList(sortDataDownward(array, 'name'));
+        }
+        if (activeArrowId === 'arrow5') {
+          setCurrentStudentsList(sortDataUpward(array, 'github'));
+        }
+        if (activeArrowId === 'arrow6') {
+          setCurrentStudentsList(sortDataDownward(array, 'github'));
+        }
+        if (activeArrowId === 'arrow7') {
+          setCurrentStudentsList(sortDataUpward(array, 'email'));
+        }
+        if (activeArrowId === 'arrow8') {
+          setCurrentStudentsList(sortDataDownward(array, 'email'));
+        }
+        if (activeArrowId === 'arrow9') {
+          setCurrentStudentsList(sortDataUpward(array, 'location'));
+        }
+        if (activeArrowId === 'arrow10') {
+          setCurrentStudentsList(sortDataDownward(array, 'location'));
+        }
       }
       setActiveRowId(-1);
       setActiveRowsArray([]);
@@ -263,6 +299,8 @@ function Table() {
         handleSelectChange={handleSelectChange}
         onSearchButtonClick={onSearchButtonClick}
         onResetButtonClick={onResetButtonClick}
+        currentStudentsList={currentStudentsList}
+        setCurrentStudentsList={setCurrentStudentsList}
       />
       <FixedSizeList
         height={500}

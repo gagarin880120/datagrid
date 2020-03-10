@@ -1,20 +1,31 @@
 import React, { useState } from 'react';
 import styles from './HeaderRow.module.css';
 import Modal from 'react-modal';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 Modal.setAppElement('#root');
 
 export default function HeaderRow(props) {
+  const dispatch = useDispatch();
   const isNameColumnVisible = useSelector(state => state.isNameColumnVisible);
   const isGithubColumnVisible = useSelector(state => state.isGithubColumnVisible);
   const isEmailColumnVisible = useSelector(state => state.isEmailColumnVisible);
   const isLocationColumnVisible = useSelector(state => state.isLocationColumnVisible);
   const isRoleColumnVisible = useSelector(state => state.isRoleColumnVisible);
   const isActiveColumnVisible = useSelector(state => state.isActiveColumnVisible);
-  const [activeArrowId, setActiveArrowId] = useState('arrow1');
+  const activeArrowId = useSelector(state => state.activeArrowId);
+  // const [activeArrowId, setActiveArrowId] = useState('arrow1');
   const [modalIsOpen, setIsOpen] = useState(false);
   const [activeModalId, setActiveModalId] = useState('');
+
+  function changeField(field, value) {
+    return dispatch({
+      type: "CHANGE_FIELD",
+      payload: {
+        [field]: value
+      }
+    });
+  }
 
   function openModal() {
     setIsOpen(true);
@@ -45,8 +56,8 @@ export default function HeaderRow(props) {
           id="arrow1"
           style={activeArrowId === 'arrow1' ? activeArrowStyles : null}
           onClick={() => {
-            props.sortDataUpward('id');
-            setActiveArrowId('arrow1');
+            props.setCurrentStudentsList(props.sortDataUpward(props.currentStudentsList, 'id'));
+            changeField('activeArrowId', 'arrow1');
           }}
         >▲</span>
         <span 
@@ -54,8 +65,9 @@ export default function HeaderRow(props) {
           id="arrow2"
           style={activeArrowId === 'arrow2' ? activeArrowStyles : null}
           onClick={() => {
-            props.sortDataDownward('id');
-            setActiveArrowId('arrow2');
+            // props.sortDataDownward('id');
+            props.setCurrentStudentsList(props.sortDataDownward(props.currentStudentsList, 'id'));
+            changeField('activeArrowId', 'arrow2');
           }}
         >▼</span>
       </div>
@@ -66,8 +78,9 @@ export default function HeaderRow(props) {
           style={activeArrowId === 'arrow3' ? activeArrowStyles : null}
           id="arrow3" 
           onClick={() => {
-            props.sortDataUpward('name');
-            setActiveArrowId('arrow3');
+            // props.sortDataUpward('name');
+            props.setCurrentStudentsList(props.sortDataUpward(props.currentStudentsList, 'name'));
+            changeField('activeArrowId', 'arrow3');
           }}
         >▲</span>
         <span 
@@ -75,8 +88,9 @@ export default function HeaderRow(props) {
           id="arrow4"
           style={activeArrowId === 'arrow4' ? activeArrowStyles : null}
           onClick={() => {
-            props.sortDataDownward('name')
-            setActiveArrowId('arrow4');
+            // props.sortDataDownward('name')
+            props.setCurrentStudentsList(props.sortDataDownward(props.currentStudentsList, 'name'));
+            changeField('activeArrowId', 'arrow4');
           }}
         >▼</span>
         <Modal
@@ -139,8 +153,9 @@ export default function HeaderRow(props) {
           id="arrow5"
           style={activeArrowId === 'arrow5' ? activeArrowStyles : null}
           onClick={() => {
-            props.sortDataUpward('github');
-            setActiveArrowId('arrow5');
+            // props.sortDataUpward('github');
+            props.setCurrentStudentsList(props.sortDataUpward(props.currentStudentsList, 'github'));
+            changeField('activeArrowId', 'arrow5');
           }}
         >▲</span>
         <span 
@@ -148,8 +163,9 @@ export default function HeaderRow(props) {
           id="arrow6"
           style={activeArrowId === 'arrow6' ? activeArrowStyles : null}
           onClick={() => {
-            props.sortDataDownward('github');
-            setActiveArrowId('arrow6');
+            // props.sortDataDownward('github');
+            props.setCurrentStudentsList(props.sortDataDownward(props.currentStudentsList, 'github'));
+            changeField('activeArrowId', 'arrow6');
           }}
         >▼</span>
         <Modal
@@ -212,8 +228,9 @@ export default function HeaderRow(props) {
           style={activeArrowId === 'arrow7' ? activeArrowStyles : null}
           id="arrow7"
           onClick={() => {
-            props.sortDataUpward('email');
-            setActiveArrowId('arrow7');
+            // props.sortDataUpward('email');
+            props.setCurrentStudentsList(props.sortDataUpward(props.currentStudentsList, 'email'));
+            changeField('activeArrowId', 'arrow7');
           }}
         >▲</span>
         <span 
@@ -221,8 +238,9 @@ export default function HeaderRow(props) {
           id="arrow8"
           style={activeArrowId === 'arrow8' ? activeArrowStyles : null}
           onClick={() => {
-            props.sortDataDownward('email');
-            setActiveArrowId('arrow8');
+            // props.sortDataDownward('email');
+            props.setCurrentStudentsList(props.sortDataDownward(props.currentStudentsList, 'email'));
+            changeField('activeArrowId', 'arrow8');
           }}
         >▼</span>
         <Modal
@@ -285,8 +303,9 @@ export default function HeaderRow(props) {
           id="arrow9"
           style={activeArrowId === 'arrow9' ? activeArrowStyles : null}
           onClick={() => {
-            props.sortDataUpward('location');
-            setActiveArrowId('arrow9');
+            // props.sortDataUpward('location');
+            props.setCurrentStudentsList(props.sortDataUpward(props.currentStudentsList, 'location'));
+            changeField('activeArrowId', 'arrow9');
           }}
         >▲</span>
         <span 
@@ -294,8 +313,9 @@ export default function HeaderRow(props) {
           id="arrow10"
           style={activeArrowId === 'arrow10' ? activeArrowStyles : null}
           onClick={() => {
-            props.sortDataDownward('location');
-            setActiveArrowId('arrow10');
+            // props.sortDataDownward('location');
+            props.setCurrentStudentsList(props.sortDataDownward(props.currentStudentsList, 'location'));
+            changeField('activeArrowId', 'arrow10');
           }}
         >▼</span>
 
