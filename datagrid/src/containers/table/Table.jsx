@@ -22,6 +22,8 @@ function Table() {
   const [isFilteredByString, setIsFilteredByString] = useState(false);
   const [stringFieldFilteredBy, setStringFieldFilteredBy] = useState("");
   const [activeRowId, setActiveRowId] = useState(-1);
+  const [severalActiveRowsMode, setSeveralActiveRowsMode] = useState(false);
+  const [activeRowsArray, setActiveRowsArray] = useState([]);
 
   function changeField(field, value) {
     return dispatch({
@@ -200,15 +202,33 @@ function Table() {
   }
 
   function onRowClick(e) {
-    setActiveRowId(e.target.parentNode.id)
+    setActiveRowId(e.target.parentNode.id);
+    if(severalActiveRowsMode) {
+      setActiveRowsArray([...new Set([...activeRowsArray, activeRowId, e.target.parentNode.id])])
+    } else {
+      setActiveRowsArray([]);
+    }
   }
 
   function onKeyDownHandler(e) {
     if(e.key === 'Delete') {
-      changeField('students', [...students.filter(v => v.id !== Number(activeRowId))])
-      setCurrentStudentsList([...students.filter(v => v.id !== Number(activeRowId))]);
+      if(activeRowsArray.length) {
+        changeField('students', [...students.filter(v => !(activeRowsArray.includes(`${v.id}`)))]);
+        setCurrentStudentsList([...students.filter(v => !(activeRowsArray.includes(`${v.id}`)))]);
+      } else {
+        changeField('students', [...students.filter(v => v.id !== Number(activeRowId))]);
+        setCurrentStudentsList([...students.filter(v => v.id !== Number(activeRowId))]);
+      }
       setActiveRowId(-1);
+      setActiveRowsArray([]);
     }
+    if(e.key === 'Control') {
+      setSeveralActiveRowsMode(true);
+    }
+  }
+
+  function onKeyUpHandler() {
+    setSeveralActiveRowsMode(false);
   }
 
   const ListRow = ({ index, style }) => (
@@ -224,11 +244,12 @@ function Table() {
       location={currentStudentsList[index].location}
       role={currentStudentsList[index].role}
       isActive={currentStudentsList[index].isActive}
+      activeRowsArray={activeRowsArray}
     />
   );
 
   return (
-    <div className={styles.wrapper} onKeyDown={onKeyDownHandler} tabIndex="0">
+    <div className={styles.wrapper} onKeyDown={onKeyDownHandler} onKeyUp={onKeyUpHandler} tabIndex="0">
       <HeaderRow
         sortDataUpward={sortDataUpward}
         sortDataDownward={sortDataDownward}

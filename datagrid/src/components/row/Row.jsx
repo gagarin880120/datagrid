@@ -30,7 +30,7 @@ export default function HeaderRow(props) {
   return (
     <div 
       id={props.id}
-      style={props.id === Number(props.activeRowId) ? Object.assign(activeRowStyles, props.style) : props.style}
+      style={props.id === Number(props.activeRowId) || props.activeRowsArray.includes(`${props.id}`) ? Object.assign(activeRowStyles, props.style) : props.style}
       className={styles.wrapper} 
       onClick={props.onRowClick} 
     >
