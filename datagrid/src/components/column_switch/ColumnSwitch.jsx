@@ -13,15 +13,16 @@ export default function ColumnSwitch() {
 
   function changeField(field, value) {
     return dispatch({
-      type: "CHANGE_FIELD",
+      type: 'CHANGE_FIELD',
       payload: {
-        [field]: value,
+        [field]: value
       }
     });
   }
 
   function handleCheckboxChange(e, field) {
     changeField(field, e.target.checked);
+    localStorage.setItem(field, e.target.checked);
   }
 
   return (
@@ -31,7 +32,7 @@ export default function ColumnSwitch() {
           id="nameColumn"
           type="checkbox"
           checked={isNameColumnVisible}
-          onChange={(e) => handleCheckboxChange(e, 'isNameColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isNameColumnVisible')}
         />
         name
       </label>
@@ -40,7 +41,7 @@ export default function ColumnSwitch() {
           id="githubColumn"
           type="checkbox"
           checked={isGithubColumnVisible}
-          onChange={(e) => handleCheckboxChange(e, 'isGithubColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isGithubColumnVisible')}
         />
         github
       </label>
@@ -49,7 +50,7 @@ export default function ColumnSwitch() {
           id="emailColumn"
           type="checkbox"
           checked={isEmailColumnVisible}
-          onChange={(e) => handleCheckboxChange(e, 'isEmailColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isEmailColumnVisible')}
         />
         email
       </label>
@@ -58,7 +59,7 @@ export default function ColumnSwitch() {
           id="locationColumn"
           type="checkbox"
           checked={isLocationColumnVisible}
-          onChange={(e) => handleCheckboxChange(e, 'isLocationColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isLocationColumnVisible')}
         />
         location
       </label>
@@ -67,7 +68,7 @@ export default function ColumnSwitch() {
           id="roleColumn"
           type="checkbox"
           checked={isRoleColumnVisible}
-          onChange={(e) => handleCheckboxChange(e, 'isRoleColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isRoleColumnVisible')}
         />
         role
       </label>
@@ -76,11 +77,10 @@ export default function ColumnSwitch() {
           id="activeColumn"
           type="checkbox"
           checked={isActiveColumnVisible}
-          onChange={(e) => handleCheckboxChange(e, 'isActiveColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isActiveColumnVisible')}
         />
         active members
       </label>
-
     </div>
-  )
+  );
 }

@@ -1,34 +1,81 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import styles from "./Table.module.css";
-import HeaderRow from "../../components/header_row/HeaderRow";
-import Row from "../../components/row/Row";
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import styles from './Table.module.css';
+import HeaderRow from '../../components/header_row/HeaderRow';
+import Row from '../../components/row/Row';
 import { FixedSizeList } from 'react-window';
 
 function Table() {
   const students = useSelector(state => state.students);
   const activeArrowId = useSelector(state => state.activeArrowId);
+  const isSortedBy = useSelector(state => state.isSortedBy);
   const dispatch = useDispatch();
-  const [currentStudentsList, setCurrentStudentsList] = useState(students);
-  const [isChecked, setIsChecked] = useState(false);
-  const [isFilteredByRole, setIsFilteredByRole] = useState(false);
-  const [roleFilteredBy, setRoleFilteredBy] = useState("");
-  const [selectValue, setSelectValue] = useState("");
+  const [currentStudentsList, setCurrentStudentsList] = useState(
+    parseInt(activeArrowId, 10) % 2
+      ? sortDataUpward(students, isSortedBy)
+      : sortDataDownward(students, isSortedBy)
+  );
+  const [isChecked, setIsChecked] = useState(
+    localStorage.getItem('isChecked') ? JSON.parse(localStorage.getItem('isChecked')) : false
+  );
+  const [isFilteredByRole, setIsFilteredByRole] = useState(
+    localStorage.getItem('isFilteredByRole')
+      ? JSON.parse(localStorage.getItem('isFilteredByRole'))
+      : false
+  );
+  const [roleFilteredBy, setRoleFilteredBy] = useState(
+    localStorage.getItem('roleFilteredBy') || ''
+  );
   const [request, setRequest] = useState({
-    name: "",
-    github: "",
-    email: "",
-    location: ""
+    name: localStorage.getItem('nameRequest') || '',
+    github: '',
+    email: '',
+    location: ''
   });
-  const [isFilteredByString, setIsFilteredByString] = useState(false);
-  const [stringFieldFilteredBy, setStringFieldFilteredBy] = useState("");
+  const [isFilteredByString, setIsFilteredByString] = useState(
+    localStorage.getItem('isFilteredByString')
+      ? JSON.parse(localStorage.getItem('isFilteredByString'))
+      : false
+  );
+  const [stringFieldFilteredBy, setStringFieldFilteredBy] = useState(
+    localStorage.getItem('stringFieldFilteredBy') || ''
+  );
   const [activeRowId, setActiveRowId] = useState(-1);
   const [severalActiveRowsMode, setSeveralActiveRowsMode] = useState(false);
   const [activeRowsArray, setActiveRowsArray] = useState([]);
 
+  useEffect(() => {
+    let array = [];
+    if (isFilteredByRole && isFilteredByString) {
+      array = filterByRole(
+        filterByRequest(request[stringFieldFilteredBy], stringFieldFilteredBy),
+        roleFilteredBy
+      );
+      if (isChecked) {
+        array = array.filter(item => item.isActive);
+      }
+    } else if (isFilteredByRole) {
+      array = filterByRole(students, roleFilteredBy);
+      if (isChecked) {
+        array = array.filter(item => item.isActive);
+      }
+    } else if (isFilteredByString) {
+      array = filterByRequest(request[stringFieldFilteredBy], stringFieldFilteredBy);
+      if (isChecked) {
+        array = array.filter(item => item.isActive);
+      }
+    } else {
+      array = students;
+      if (isChecked) {
+        array = array.filter(item => item.isActive);
+      }
+    }
+    setCurrentStudentsList(array);
+  }, []);
+
   function changeField(field, value) {
     return dispatch({
-      type: "CHANGE_FIELD",
+      type: 'CHANGE_FIELD',
       payload: {
         [field]: value
       }
@@ -36,23 +83,21 @@ function Table() {
   }
 
   function sortDataUpward(array, category) {
-    changeField("isSortedBy", category);
-    array.sort((a, b) =>
-      a[category] > b[category] ? 1 : a[category] < b[category] ? -1 : 0
-    );
+    localStorage.setItem('isSortedBy', category);
+    array.sort((a, b) => (a[category] > b[category] ? 1 : a[category] < b[category] ? -1 : 0));
     return array;
   }
 
   function sortDataDownward(array, category) {
-    changeField("isSortedBy", category);
-    array.sort((a, b) =>
-      a[category] > b[category] ? -1 : a[category] < b[category] ? 1 : 0
-    );
+    localStorage.setItem('isSortedBy', category);
+    array.sort((a, b) => (a[category] > b[category] ? -1 : a[category] < b[category] ? 1 : 0));
     return array;
   }
 
   function filterByRequest(str, field) {
     setIsFilteredByString(true);
+    localStorage.setItem('isFilteredByString', true);
+
     const array = students.filter(item => item[field].toLowerCase().includes(str));
     return array;
   }
@@ -60,43 +105,46 @@ function Table() {
   function filterByRole(arr, str) {
     let array = [];
     setIsFilteredByRole(true);
-    if (str === "all") {
+    localStorage.setItem('isFilteredByRole', true);
+    if (str === 'all') {
       array = arr;
     } else {
       array = arr.filter(item => item.role === str);
     }
-    
+
     return array;
   }
 
   function onSearchButtonClick(field) {
     setStringFieldFilteredBy(field);
+    localStorage.setItem('stringFieldFilteredBy', field);
     let array = filterByRequest(request[field], field);
     if (isChecked && isFilteredByRole) {
-      array = filterByRole(array, roleFilteredBy).filter(item => item.isActive)
+      array = filterByRole(array, roleFilteredBy).filter(item => item.isActive);
     } else if (isChecked) {
-      array = array.filter(item => item.isActive)
+      array = array.filter(item => item.isActive);
     } else if (isFilteredByRole) {
-      array = filterByRole(array, roleFilteredBy)
+      array = filterByRole(array, roleFilteredBy);
     }
     setCurrentStudentsList(array);
   }
 
   function onResetButtonClick(field) {
-    setRequest(Object.assign({[field]: ''}));
+    setRequest(Object.assign({ [field]: '' }));
     let array = filterByRequest('', field);
     if (isChecked && isFilteredByRole) {
-      array = filterByRole(array, roleFilteredBy).filter(item => item.isActive)
+      array = filterByRole(array, roleFilteredBy).filter(item => item.isActive);
     } else if (isChecked) {
-      array = array.filter(item => item.isActive)
+      array = array.filter(item => item.isActive);
     } else if (isFilteredByRole) {
-      array = filterByRole(array, roleFilteredBy)
+      array = filterByRole(array, roleFilteredBy);
     }
     setCurrentStudentsList(array);
   }
 
   function handleCheckboxChange(e) {
     setIsChecked(e.target.checked);
+    localStorage.setItem('isChecked', e.target.checked);
     let array = [];
     if (isFilteredByRole && isFilteredByString) {
       array = filterByRole(
@@ -112,10 +160,7 @@ function Table() {
         array = array.filter(item => item.isActive);
       }
     } else if (isFilteredByString) {
-      array = filterByRequest(
-        request[stringFieldFilteredBy],
-        stringFieldFilteredBy
-      )
+      array = filterByRequest(request[stringFieldFilteredBy], stringFieldFilteredBy);
       if (e.target.checked) {
         array = array.filter(item => item.isActive);
       }
@@ -129,80 +174,26 @@ function Table() {
   }
 
   function handleSelectChange(e) {
-    setSelectValue(e.target.value);
+    setRoleFilteredBy(e.target.value);
+    localStorage.setItem('roleFilteredBy', e.target.value);
     let array = [];
     if (isFilteredByString && isChecked) {
-      array = filterByRequest(
-        request[stringFieldFilteredBy],
-        stringFieldFilteredBy
-      );
-      if (e.target.value === "mentor") {
-        setRoleFilteredBy("mentor");
-        array = filterByRole(array, "mentor").filter(item => item.isActive);
-      } else if (e.target.value === "activist") {
-        setRoleFilteredBy("activist");
-        array = filterByRole(array, "activist").filter(item => item.isActive);
-      } else if (e.target.value === "student") {
-        setRoleFilteredBy("student");
-        array = filterByRole(array, "student").filter(item => item.isActive);
-      } else {
-        setRoleFilteredBy("all");
-        array = filterByRole(array, "all").filter(item => item.isActive);
-      }
-      
+      array = filterByRequest(request[stringFieldFilteredBy], stringFieldFilteredBy);
+      array = filterByRole(array, e.target.value).filter(item => item.isActive);
     } else if (isFilteredByString) {
-      array = filterByRequest(
-        request[stringFieldFilteredBy],
-        stringFieldFilteredBy
-      );
-      if (e.target.value === "mentor") {
-        setRoleFilteredBy("mentor");
-        array = filterByRole(array, "mentor");
-      } else if (e.target.value === "activist") {
-        setRoleFilteredBy("activist");
-        array = filterByRole(array, "activist");
-      } else if (e.target.value === "student") {
-        setRoleFilteredBy("student");
-        array = filterByRole(array, "student");
-      } else {
-        setRoleFilteredBy("all");
-        array = filterByRole(array, "all");
-      }
+      array = filterByRequest(request[stringFieldFilteredBy], stringFieldFilteredBy);
+      array = filterByRole(array, e.target.value);
     } else if (isChecked) {
-      if (e.target.value === "mentor") {
-        setRoleFilteredBy("mentor");
-        array = filterByRole(students, "mentor").filter(item => item.isActive);
-      } else if (e.target.value === "activist") {
-        setRoleFilteredBy("activist");
-        array = filterByRole(students, "activist").filter(item => item.isActive);
-      } else if (e.target.value === "student") {
-        setRoleFilteredBy("student");
-        array = filterByRole(students, "student").filter(item => item.isActive);
-      } else {
-        setRoleFilteredBy("all");
-        array = filterByRole(students, "all").filter(item => item.isActive);
-      }
+      array = filterByRole(students, e.target.value).filter(item => item.isActive);
     } else {
-      if (e.target.value === "mentor") {
-        setRoleFilteredBy("mentor");
-        array = filterByRole(students, "mentor");
-      } else if (e.target.value === "activist") {
-        setRoleFilteredBy("activist");
-        array = filterByRole(students, "activist");
-      } else if (e.target.value === "student") {
-        setRoleFilteredBy("student");
-        array = filterByRole(students, "student");
-      } else {
-        setRoleFilteredBy("all");
-        array = filterByRole(students, "all");
-      }
+      array = filterByRole(students, e.target.value);
     }
     setCurrentStudentsList(array);
   }
 
   function onRowClick(e) {
     setActiveRowId(e.target.parentNode.id);
-    if(severalActiveRowsMode) {
+    if (severalActiveRowsMode) {
       setActiveRowsArray([...new Set([...activeRowsArray, activeRowId, e.target.parentNode.id])]);
     } else {
       setActiveRowsArray([]);
@@ -210,51 +201,20 @@ function Table() {
   }
 
   function onKeyDownHandler(e) {
-    if(e.key === 'Delete') {
+    if (e.key === 'Delete') {
       let array = [];
-      if(activeRowsArray.length) {
-        array = [...students.filter(v => !(activeRowsArray.includes(`${v.id}`)))];
-        changeField('students', array);
-        setCurrentStudentsList(array);
+      if (activeRowsArray.length) {
+        array = [...students.filter(v => !activeRowsArray.includes(`${v.id}`))];
       } else {
         array = [...students.filter(v => v.id !== Number(activeRowId))];
-        changeField('students', array);
-        setCurrentStudentsList(array);
-        if (activeArrowId === 'arrow1') {
-          setCurrentStudentsList(sortDataUpward(array, 'id'));
-        }
-        if (activeArrowId === 'arrow2') {
-          setCurrentStudentsList(sortDataDownward(array, 'id'));
-        }
-        if (activeArrowId === 'arrow3') {
-          setCurrentStudentsList(sortDataUpward(array, 'name'));
-        }
-        if (activeArrowId === 'arrow4') {
-          setCurrentStudentsList(sortDataDownward(array, 'name'));
-        }
-        if (activeArrowId === 'arrow5') {
-          setCurrentStudentsList(sortDataUpward(array, 'github'));
-        }
-        if (activeArrowId === 'arrow6') {
-          setCurrentStudentsList(sortDataDownward(array, 'github'));
-        }
-        if (activeArrowId === 'arrow7') {
-          setCurrentStudentsList(sortDataUpward(array, 'email'));
-        }
-        if (activeArrowId === 'arrow8') {
-          setCurrentStudentsList(sortDataDownward(array, 'email'));
-        }
-        if (activeArrowId === 'arrow9') {
-          setCurrentStudentsList(sortDataUpward(array, 'location'));
-        }
-        if (activeArrowId === 'arrow10') {
-          setCurrentStudentsList(sortDataDownward(array, 'location'));
-        }
       }
+      changeField('students', array);
+      localStorage.setItem('students', JSON.stringify(array));
+      setCurrentStudentsList(array);
       setActiveRowId(-1);
       setActiveRowsArray([]);
     }
-    if(e.key === 'Control') {
+    if (e.key === 'Control') {
       setSeveralActiveRowsMode(true);
     }
   }
@@ -281,7 +241,12 @@ function Table() {
   );
 
   return (
-    <div className={styles.wrapper} onKeyDown={onKeyDownHandler} onKeyUp={onKeyUpHandler} tabIndex="0">
+    <div
+      className={styles.wrapper}
+      onKeyDown={onKeyDownHandler}
+      onKeyUp={onKeyUpHandler}
+      tabIndex="0"
+    >
       <HeaderRow
         sortDataUpward={sortDataUpward}
         sortDataDownward={sortDataDownward}
@@ -291,22 +256,17 @@ function Table() {
         setIsChecked={setIsChecked}
         request={request}
         setRequest={setRequest}
-        selectValue={selectValue}
+        roleFilteredBy={roleFilteredBy}
         handleSelectChange={handleSelectChange}
         onSearchButtonClick={onSearchButtonClick}
         onResetButtonClick={onResetButtonClick}
         currentStudentsList={currentStudentsList}
         setCurrentStudentsList={setCurrentStudentsList}
       />
-      <FixedSizeList
-        height={500}
-        width={1250}
-        itemSize={20}
-        itemCount={currentStudentsList.length}
-      >
+      <FixedSizeList height={500} width={1250} itemSize={20} itemCount={currentStudentsList.length}>
         {ListRow}
       </FixedSizeList>
-    </div>  
+    </div>
   );
 }
 

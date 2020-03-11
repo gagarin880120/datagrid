@@ -18,8 +18,9 @@ export default function HeaderRow(props) {
   const [activeModalId, setActiveModalId] = useState('');
 
   function changeField(field, value) {
+    localStorage.setItem(field, value);
     return dispatch({
-      type: "CHANGE_FIELD",
+      type: 'CHANGE_FIELD',
       payload: {
         [field]: value
       }
@@ -36,352 +37,404 @@ export default function HeaderRow(props) {
 
   const activeArrowStyles = {
     color: 'red'
-  }
-
-  const notVisibleStyles = {
-    display: 'none'
-  }
-
-  const visibleStyles = {
-    display: 'inline'
-  }
+  };
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
-        # 
-        <span 
+        #
+        <span
           className={styles.arrow}
-          id="arrow1"
-          style={activeArrowId === 'arrow1' ? activeArrowStyles : null}
+          id="1arrow"
+          style={activeArrowId === '1arrow' ? activeArrowStyles : null}
           onClick={() => {
             props.setCurrentStudentsList(props.sortDataUpward(props.currentStudentsList, 'id'));
-            changeField('activeArrowId', 'arrow1');
+            changeField('isSortedBy', 'id');
+            changeField('activeArrowId', '1arrow');
           }}
-        >▲</span>
-        <span 
+        >
+          ▲
+        </span>
+        <span
           className={styles.arrow}
-          id="arrow2"
-          style={activeArrowId === 'arrow2' ? activeArrowStyles : null}
+          id="2arrow"
+          style={activeArrowId === '2arrow' ? activeArrowStyles : null}
           onClick={() => {
             props.setCurrentStudentsList(props.sortDataDownward(props.currentStudentsList, 'id'));
-            changeField('activeArrowId', 'arrow2');
+            changeField('isSortedBy', 'id');
+            changeField('activeArrowId', '2arrow');
           }}
-        >▼</span>
+        >
+          ▼
+        </span>
       </div>
-      <div className={styles.header} style={isNameColumnVisible ? visibleStyles : notVisibleStyles}>
-        Name
-        <span 
-          className={styles.arrow}
-          style={activeArrowId === 'arrow3' ? activeArrowStyles : null}
-          id="arrow3" 
-          onClick={() => {
-            props.setCurrentStudentsList(props.sortDataUpward(props.currentStudentsList, 'name'));
-            changeField('activeArrowId', 'arrow3');
-          }}
-        >▲</span>
-        <span 
-          className={styles.arrow}
-          id="arrow4"
-          style={activeArrowId === 'arrow4' ? activeArrowStyles : null}
-          onClick={() => {
-            props.setCurrentStudentsList(props.sortDataDownward(props.currentStudentsList, 'name'));
-            changeField('activeArrowId', 'arrow4');
-          }}
-        >▼</span>
-        <Modal
-          isOpen={(modalIsOpen && activeModalId === 'modal1') ? true : false}
-          id="modal1"
-          onRequestClose={closeModal}
-          className={styles.modal}
-          overlayClassName={styles.overlay}
-          style={{
-            content: {
-              top: '23px',
-              left: '60px'
-            }
-          }}
-        >
-          <input
-            type="text"
-            value={props.request.name}
-            onChange={(e) => props.setRequest({
-              name: e.target.value,
-              github: props.request.github,
-              email: props.request.email,
-              location: props.request.location
-            })}
-          />
-          <br />
-          <button
-            className={styles.modalButton}
+      {isNameColumnVisible ? (
+        <div className={styles.header}>
+          Name
+          <span
+            className={styles.arrow}
+            style={activeArrowId === '3arrow' ? activeArrowStyles : null}
+            id="3arrow"
             onClick={() => {
-              props.onSearchButtonClick('name');
-              closeModal();
+              props.setCurrentStudentsList(props.sortDataUpward(props.currentStudentsList, 'name'));
+              changeField('isSortedBy', 'name');
+              changeField('activeArrowId', '3arrow');
             }}
           >
-            search
-          </button>
-          <button
-            className={styles.modalButton}
+            ▲
+          </span>
+          <span
+            className={styles.arrow}
+            id="4arrow"
+            style={activeArrowId === '4arrow' ? activeArrowStyles : null}
             onClick={() => {
-              props.onResetButtonClick('name');
-              closeModal();
+              props.setCurrentStudentsList(
+                props.sortDataDownward(props.currentStudentsList, 'name')
+              );
+              changeField('isSortedBy', 'name');
+              changeField('activeArrowId', '4arrow');
             }}
           >
-            reset
-          </button>
-        </Modal>
-        <button
-          className={styles.search}
-          onClick={() => {
-            setActiveModalId('modal1');
-            openModal();
-          }}
-        >
-          <i className="fas fa-search"></i>
-        </button>
-      </div>
-      <div className={styles.header} style={isGithubColumnVisible ? visibleStyles : notVisibleStyles}>
-        github
-        <span 
-          className={styles.arrow}
-          id="arrow5"
-          style={activeArrowId === 'arrow5' ? activeArrowStyles : null}
-          onClick={() => {
-            props.setCurrentStudentsList(props.sortDataUpward(props.currentStudentsList, 'github'));
-            changeField('activeArrowId', 'arrow5');
-          }}
-        >▲</span>
-        <span 
-          className={styles.arrow}
-          id="arrow6"
-          style={activeArrowId === 'arrow6' ? activeArrowStyles : null}
-          onClick={() => {
-            props.setCurrentStudentsList(props.sortDataDownward(props.currentStudentsList, 'github'));
-            changeField('activeArrowId', 'arrow6');
-          }}
-        >▼</span>
-        <Modal
-          isOpen={(modalIsOpen && activeModalId === 'modal2') ? true : false}
-          onRequestClose={closeModal}
-          className={styles.modal}
-          id="modal2"
-          overlayClassName={styles.overlay}
-          style={{
-            content: {
-              top: '23px',
-              left: '290px'
-            }
-          }}
-        >
-          <input
-            type="text"
-            value={props.request.github}
-            onChange={(e) => props.setRequest({
-              name: props.request.name,
-              github: e.target.value,
-              email: props.request.email,
-              location: props.request.location
-            })}
-          />
-          <br />
-          <button
-            className={styles.modalButton}
-            onClick={() => {
-              props.onSearchButtonClick('github');
-              closeModal();
+            ▼
+          </span>
+          <Modal
+            isOpen={modalIsOpen && activeModalId === 'modal1' ? true : false}
+            id="modal1"
+            onRequestClose={closeModal}
+            className={styles.modal}
+            overlayClassName={styles.overlay}
+            style={{
+              content: {
+                top: '23px',
+                left: '60px'
+              }
             }}
           >
-            search
-          </button>
+            <input
+              type="text"
+              value={props.request.name}
+              onChange={e => {
+                props.setRequest({
+                  name: e.target.value,
+                  github: props.request.github,
+                  email: props.request.email,
+                  location: props.request.location
+                });
+                localStorage.setItem('nameRequest', e.target.value);
+              }}
+            />
+            <br />
+            <button
+              className={styles.modalButton}
+              onClick={() => {
+                props.onSearchButtonClick('name');
+                closeModal();
+              }}
+            >
+              search
+            </button>
+            <button
+              className={styles.modalButton}
+              onClick={() => {
+                props.onResetButtonClick('name');
+                closeModal();
+              }}
+            >
+              reset
+            </button>
+          </Modal>
           <button
-            className={styles.modalButton}
+            className={styles.search}
             onClick={() => {
-              props.onResetButtonClick('github');
-              closeModal();
+              setActiveModalId('modal1');
+              openModal();
             }}
           >
-            reset
+            <i className="fas fa-search"></i>
           </button>
-        </Modal>
-        <button
-          className={styles.search}
-          onClick={() => {
-            setActiveModalId('modal2');
-            openModal();
-          }}
-        >
-          <i className="fas fa-search"></i>
-        </button>
-      </div>
-      <div className={styles.header} style={isEmailColumnVisible ? visibleStyles : notVisibleStyles}>
-        email
-        <span 
-          className={styles.arrow}
-          style={activeArrowId === 'arrow7' ? activeArrowStyles : null}
-          id="arrow7"
-          onClick={() => {
-            props.setCurrentStudentsList(props.sortDataUpward(props.currentStudentsList, 'email'));
-            changeField('activeArrowId', 'arrow7');
-          }}
-        >▲</span>
-        <span 
-          className={styles.arrow}
-          id="arrow8"
-          style={activeArrowId === 'arrow8' ? activeArrowStyles : null}
-          onClick={() => {
-            props.setCurrentStudentsList(props.sortDataDownward(props.currentStudentsList, 'email'));
-            changeField('activeArrowId', 'arrow8');
-          }}
-        >▼</span>
-        <Modal
-          isOpen={(modalIsOpen && activeModalId === 'modal3') ? true : false}
-          onRequestClose={closeModal}
-          className={styles.modal}
-          id="modal3"
-          overlayClassName={styles.overlay}
-          style={{
-            content: {
-              top: '23px',
-              left: '660px'
-            }
-          }}
-        >
-          <input
-            type="text"
-            value={props.request.email}
-            onChange={(e) => props.setRequest({
-              name: props.request.name,
-              github: props.request.github,
-              email: e.target.value,
-              location: props.request.location
-            })}
-          />
-          <br />
-          <button
-            className={styles.modalButton}
+        </div>
+      ) : null}
+      {isGithubColumnVisible ? (
+        <div className={styles.header}>
+          github
+          <span
+            className={styles.arrow}
+            id="5arrow"
+            style={activeArrowId === '5arrow' ? activeArrowStyles : null}
             onClick={() => {
-              props.onSearchButtonClick('email');
-              closeModal();
+              props.setCurrentStudentsList(
+                props.sortDataUpward(props.currentStudentsList, 'github')
+              );
+              changeField('isSortedBy', 'github');
+              changeField('activeArrowId', '5arrow');
             }}
           >
-            search
-          </button>
-          <button
-            className={styles.modalButton}
+            ▲
+          </span>
+          <span
+            className={styles.arrow}
+            id="6arrow"
+            style={activeArrowId === '6arrow' ? activeArrowStyles : null}
             onClick={() => {
-              props.onResetButtonClick('email');
-              closeModal();
+              props.setCurrentStudentsList(
+                props.sortDataDownward(props.currentStudentsList, 'github')
+              );
+              changeField('isSortedBy', 'github');
+              changeField('activeArrowId', '6arrow');
             }}
           >
-            reset
-          </button>
-        </Modal>
-        <button
-          className={styles.search}
-          onClick={() => {
-            setActiveModalId('modal3');
-            openModal();
-          }}
-        >
-          <i className="fas fa-search"></i>
-        </button>
-      </div>
-      <div className={styles.header} style={isLocationColumnVisible ? visibleStyles : notVisibleStyles}>
-        Location
-        <span 
-          className={styles.arrow}
-          id="arrow9"
-          style={activeArrowId === 'arrow9' ? activeArrowStyles : null}
-          onClick={() => {
-            props.setCurrentStudentsList(props.sortDataUpward(props.currentStudentsList, 'location'));
-            changeField('activeArrowId', 'arrow9');
-          }}
-        >▲</span>
-        <span 
-          className={styles.arrow}
-          id="arrow10"
-          style={activeArrowId === 'arrow10' ? activeArrowStyles : null}
-          onClick={() => {
-            props.setCurrentStudentsList(props.sortDataDownward(props.currentStudentsList, 'location'));
-            changeField('activeArrowId', 'arrow10');
-          }}
-        >▼</span>
-
-        <Modal
-          isOpen={(modalIsOpen && activeModalId === 'modal4') ? true : false}
-          onRequestClose={closeModal}
-          className={styles.modal}
-          id="modal4"
-          overlayClassName={styles.overlay}
-          style={{
-            content: {
-              top: '23px',
-              right: '210px'
-            }
-          }}
-        >
-          <input
-            type="text"
-            value={props.request.location}
-            onChange={(e) => props.setRequest({
-              name: props.request.name,
-              github: props.request.github,
-              email: props.request.email,
-              location: e.target.value
-            })}
-          />
-          <br />
-          <button
-            className={styles.modalButton}
-            onClick={() => {
-              props.onSearchButtonClick('location');
-              closeModal();
+            ▼
+          </span>
+          <Modal
+            isOpen={modalIsOpen && activeModalId === 'modal2' ? true : false}
+            onRequestClose={closeModal}
+            className={styles.modal}
+            id="modal2"
+            overlayClassName={styles.overlay}
+            style={{
+              content: {
+                top: '23px',
+                left: '290px'
+              }
             }}
           >
-            search
-          </button>
+            <input
+              type="text"
+              value={props.request.github}
+              onChange={e => {
+                props.setRequest({
+                  name: props.request.name,
+                  github: e.target.value,
+                  email: props.request.email,
+                  location: props.request.location
+                });
+                localStorage.setItem('githubRequest', e.target.value);
+              }}
+            />
+            <br />
+            <button
+              className={styles.modalButton}
+              onClick={() => {
+                props.onSearchButtonClick('github');
+                closeModal();
+              }}
+            >
+              search
+            </button>
+            <button
+              className={styles.modalButton}
+              onClick={() => {
+                props.onResetButtonClick('github');
+                closeModal();
+              }}
+            >
+              reset
+            </button>
+          </Modal>
           <button
-            className={styles.modalButton}
+            className={styles.search}
             onClick={() => {
-              props.onResetButtonClick('location');
-              closeModal();
+              setActiveModalId('modal2');
+              openModal();
             }}
           >
-            reset
+            <i className="fas fa-search"></i>
           </button>
-        </Modal>
-        <button
-          className={styles.search}
-          onClick={() => {
-            setActiveModalId('modal4');
-            openModal();
-          }}
-        >
-          <i className="fas fa-search"></i>
-        </button>
-      </div>
-      <div className={styles.header} style={isRoleColumnVisible ? visibleStyles : notVisibleStyles}>
-        Role
-        <select
-          value={props.selectValue}
-          onChange={props.handleSelectChange}
-        >
-          <option value="all">all</option>
-          <option value="mentor">mentor</option>
-          <option value="activist">activist</option>
-          <option value="student">student</option>
-        </select>
-      </div>
-      <div className={styles.header} style={isActiveColumnVisible ? visibleStyles : notVisibleStyles}>
-        Active
-        <input
-          type="checkbox"
-          checked={props.isChecked}
-          onChange={props.handleCheckboxChange}
-        />
-      </div>
+        </div>
+      ) : null}
+      {isEmailColumnVisible ? (
+        <div className={styles.header}>
+          email
+          <span
+            className={styles.arrow}
+            style={activeArrowId === '7arrow' ? activeArrowStyles : null}
+            id="7arrow"
+            onClick={() => {
+              props.setCurrentStudentsList(
+                props.sortDataUpward(props.currentStudentsList, 'email')
+              );
+              changeField('isSortedBy', 'email');
+              changeField('activeArrowId', '7arrow');
+            }}
+          >
+            ▲
+          </span>
+          <span
+            className={styles.arrow}
+            id="8arrow"
+            style={activeArrowId === '8arrow' ? activeArrowStyles : null}
+            onClick={() => {
+              props.setCurrentStudentsList(
+                props.sortDataDownward(props.currentStudentsList, 'email')
+              );
+              changeField('isSortedBy', 'email');
+              changeField('activeArrowId', '8arrow');
+            }}
+          >
+            ▼
+          </span>
+          <Modal
+            isOpen={modalIsOpen && activeModalId === 'modal3' ? true : false}
+            onRequestClose={closeModal}
+            className={styles.modal}
+            id="modal3"
+            overlayClassName={styles.overlay}
+            style={{
+              content: {
+                top: '23px',
+                left: '660px'
+              }
+            }}
+          >
+            <input
+              type="text"
+              value={props.request.email}
+              onChange={e => {
+                props.setRequest({
+                  name: props.request.name,
+                  github: props.request.github,
+                  email: e.target.value,
+                  location: props.request.location
+                });
+                localStorage.setItem('emailRequest', e.target.value);
+              }}
+            />
+            <br />
+            <button
+              className={styles.modalButton}
+              onClick={() => {
+                props.onSearchButtonClick('email');
+                closeModal();
+              }}
+            >
+              search
+            </button>
+            <button
+              className={styles.modalButton}
+              onClick={() => {
+                props.onResetButtonClick('email');
+                closeModal();
+              }}
+            >
+              reset
+            </button>
+          </Modal>
+          <button
+            className={styles.search}
+            onClick={() => {
+              setActiveModalId('modal3');
+              openModal();
+            }}
+          >
+            <i className="fas fa-search"></i>
+          </button>
+        </div>
+      ) : null}
+      {isLocationColumnVisible ? (
+        <div className={styles.header}>
+          Location
+          <span
+            className={styles.arrow}
+            id="9arrow"
+            style={activeArrowId === '9arrow' ? activeArrowStyles : null}
+            onClick={() => {
+              props.setCurrentStudentsList(
+                props.sortDataUpward(props.currentStudentsList, 'location')
+              );
+              changeField('isSortedBy', 'location');
+              changeField('activeArrowId', '9arrow');
+            }}
+          >
+            ▲
+          </span>
+          <span
+            className={styles.arrow}
+            id="10arrow"
+            style={activeArrowId === '10arrow' ? activeArrowStyles : null}
+            onClick={() => {
+              props.setCurrentStudentsList(
+                props.sortDataDownward(props.currentStudentsList, 'location')
+              );
+              changeField('isSortedBy', 'location');
+              changeField('activeArrowId', '10arrow');
+            }}
+          >
+            ▼
+          </span>
+          <Modal
+            isOpen={modalIsOpen && activeModalId === 'modal4' ? true : false}
+            onRequestClose={closeModal}
+            className={styles.modal}
+            id="modal4"
+            overlayClassName={styles.overlay}
+            style={{
+              content: {
+                top: '23px',
+                right: '210px'
+              }
+            }}
+          >
+            <input
+              type="text"
+              value={props.request.location}
+              onChange={e => {
+                props.setRequest({
+                  name: props.request.name,
+                  github: props.request.github,
+                  email: props.request.email,
+                  location: e.target.value
+                });
+                localStorage.setItem('locationRequest', e.target.value);
+              }}
+            />
+            <br />
+            <button
+              className={styles.modalButton}
+              onClick={() => {
+                props.onSearchButtonClick('location');
+                closeModal();
+              }}
+            >
+              search
+            </button>
+            <button
+              className={styles.modalButton}
+              onClick={() => {
+                props.onResetButtonClick('location');
+                closeModal();
+              }}
+            >
+              reset
+            </button>
+          </Modal>
+          <button
+            className={styles.search}
+            onClick={() => {
+              setActiveModalId('modal4');
+              openModal();
+            }}
+          >
+            <i className="fas fa-search"></i>
+          </button>
+        </div>
+      ) : null}
+      {isRoleColumnVisible ? (
+        <div className={styles.header}>
+          Role
+          <select value={props.roleFilteredBy} onChange={props.handleSelectChange}>
+            <option value="all">all</option>
+            <option value="mentor">mentor</option>
+            <option value="activist">activist</option>
+            <option value="student">student</option>
+          </select>
+        </div>
+      ) : null}
+      {isActiveColumnVisible ? (
+        <div className={styles.header}>
+          Active
+          <input type="checkbox" checked={props.isChecked} onChange={props.handleCheckboxChange} />
+        </div>
+      ) : null}
     </div>
-  )
+  );
 }

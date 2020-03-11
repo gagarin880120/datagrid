@@ -13,85 +13,50 @@ export default function HeaderRow(props) {
 
   const activeItemStyles = {
     background: '#7fffd4'
-  }
+  };
 
   const activeRowStyles = {
     background: '#ff00ff'
-  }
+  };
 
   return (
-    <div 
+    <div
       id={props.id}
-      style={props.id === Number(props.activeRowId) || props.activeRowsArray.includes(`${props.id}`) ? Object.assign(activeRowStyles, props.style) : props.style}
-      className={styles.wrapper} 
-      onClick={props.onRowClick} 
+      style={
+        props.id === Number(props.activeRowId) || props.activeRowsArray.includes(`${props.id}`)
+          ? Object.assign(activeRowStyles, props.style)
+          : props.style
+      }
+      className={styles.wrapper}
+      onClick={props.onRowClick}
     >
-      <div 
-        className={styles.item} 
-        style={isSortedBy === 'id' ? activeItemStyles: null}
-      >
+      <div className={styles.item} style={isSortedBy === 'id' ? activeItemStyles : null}>
         {props.id}
       </div>
-      {
-        isNameColumnVisible ?
-        <div 
-          className={styles.item} 
-          style={
-            isSortedBy === 'name' ? activeItemStyles : null
-          }
-        >
+      {isNameColumnVisible ? (
+        <div className={styles.item} style={isSortedBy === 'name' ? activeItemStyles : null}>
           {props.name}
-        </div> : null
-      }
-      {
-        isGithubColumnVisible ?
-        <div 
-          className={styles.item} 
-          style={
-            isSortedBy === 'github' ? activeItemStyles : null
-          }
-        >
+        </div>
+      ) : null}
+      {isGithubColumnVisible ? (
+        <div className={styles.item} style={isSortedBy === 'github' ? activeItemStyles : null}>
           {props.github}
-        </div> : null
-      }      
-      {
-        isEmailColumnVisible ?
-        <div 
-          className={styles.item} 
-          style={
-            isSortedBy === 'email' ? activeItemStyles : null
-          }
-        >
+        </div>
+      ) : null}
+      {isEmailColumnVisible ? (
+        <div className={styles.item} style={isSortedBy === 'email' ? activeItemStyles : null}>
           {props.email}
-        </div> : null
-      } 
-      {
-        isLocationColumnVisible ?
-        <div 
-          className={styles.item} 
-          style={
-            isSortedBy === 'location' ? activeItemStyles : null
-          }
-        >
+        </div>
+      ) : null}
+      {isLocationColumnVisible ? (
+        <div className={styles.item} style={isSortedBy === 'location' ? activeItemStyles : null}>
           {props.location}
-        </div> : null
-      }
-      {
-        isRoleColumnVisible ?
-        <div 
-          className={styles.item}
-        >
-          {props.role}
-        </div> : null
-      }
-      {
-        isActiveColumnVisible ?
-        <div 
-          className={styles.item}
-        >
-          {props.isActive ? 'yes' : 'no'}
-        </div> : null
-      }
+        </div>
+      ) : null}
+      {isRoleColumnVisible ? <div className={styles.item}>{props.role}</div> : null}
+      {isActiveColumnVisible ? (
+        <div className={styles.item}>{props.isActive ? 'yes' : 'no'}</div>
+      ) : null}
     </div>
-  )
+  );
 }
