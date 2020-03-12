@@ -4,11 +4,13 @@ import styles from './Table.module.css';
 import HeaderRow from '../../components/header_row/HeaderRow';
 import Row from '../../components/row/Row';
 import { FixedSizeList } from 'react-window';
+import exportFromJSON from 'export-from-json';
 
 function Table() {
   const students = useSelector(state => state.students);
   const activeArrowId = useSelector(state => state.activeArrowId);
   const isSortedBy = useSelector(state => state.isSortedBy);
+  const notVisibleColumns = useSelector(state => state.notVisibleColumns)
   const dispatch = useDispatch();
   const [currentStudentsList, setCurrentStudentsList] = useState(
     parseInt(activeArrowId, 10) % 2
@@ -240,6 +242,15 @@ function Table() {
     />
   );
 
+  function onlyVisible(arr, keys) {
+    const array = JSON.stringify(arr);
+    const newArr = JSON.parse(array)
+    for(let i = 0; i < keys.length; i++) {
+      newArr.forEach(item => delete item[keys[i]])
+    }
+    return newArr;
+  }
+
   return (
     <div
       className={styles.wrapper}
@@ -266,6 +277,22 @@ function Table() {
       <FixedSizeList height={500} width={1250} itemSize={20} itemCount={currentStudentsList.length}>
         {ListRow}
       </FixedSizeList>
+      <button onClick={() => {
+        const data = onlyVisible(currentStudentsList, notVisibleColumns);
+        const fileName = 'download'
+        const exportType = 'csv'
+        exportFromJSON({ data, fileName, exportType })
+      }}>
+        Download as CSV
+      </button>
+      <button onClick={() => {
+        const data = onlyVisible(currentStudentsList, notVisibleColumns);
+        const fileName = 'download'
+        const exportType = 'xls'
+        exportFromJSON({ data, fileName, exportType })
+      }}>
+        Download as XLS
+      </button>
     </div>
   );
 }

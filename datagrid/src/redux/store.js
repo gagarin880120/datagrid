@@ -25,7 +25,10 @@ const initialState = {
     : true,
   isActiveColumnVisible: localStorage.getItem('isActiveColumnVisible')
     ? JSON.parse(localStorage.getItem('isActiveColumnVisible'))
-    : true
+    : true,
+  notVisibleColumns: localStorage.getItem('notVisibleColumns')
+    ? JSON.parse(localStorage.getItem('notVisibleColumns'))
+    : []
 };
 
 const enhancer = compose(DevTools.instrument());
@@ -33,6 +36,19 @@ const enhancer = compose(DevTools.instrument());
 function reducer(state = initialState, action) {
   if (action.type === 'CHANGE_FIELD') {
     return Object.assign(state, action.payload);
+  }
+  if (action.type === 'ADD_ITEM') {
+    const arr = state.notVisibleColumns;
+    arr.push(action.payload);
+    localStorage.setItem('notVisibleColumns', JSON.stringify(arr));
+    return Object.assign(state, { notVisibleColumns: arr });
+  }
+  if (action.type === 'DELETE_ITEM') {
+    const arr = state.notVisibleColumns.filter(v => v !== action.payload);
+    localStorage.setItem('notVisibleColumns', JSON.stringify(arr));
+    return Object.assign(state, {
+      notVisibleColumns: arr
+    });
   }
   return state;
 }

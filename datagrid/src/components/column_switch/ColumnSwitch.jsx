@@ -20,9 +20,28 @@ export default function ColumnSwitch() {
     });
   }
 
-  function handleCheckboxChange(e, field) {
+  function addItem(value) {
+    return dispatch({
+      type: 'ADD_ITEM',
+      payload: value
+    });
+  }
+
+  function deleteItem(value) {
+    return dispatch({
+      type: 'DELETE_ITEM',
+      payload: value
+    });
+  }
+
+  function handleCheckboxChange(e, field, column) {
     changeField(field, e.target.checked);
     localStorage.setItem(field, e.target.checked);
+    if (e.target.checked) {
+      deleteItem(column);
+    } else {
+      addItem(column);
+    }
   }
 
   return (
@@ -32,7 +51,7 @@ export default function ColumnSwitch() {
           id="nameColumn"
           type="checkbox"
           checked={isNameColumnVisible}
-          onChange={e => handleCheckboxChange(e, 'isNameColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isNameColumnVisible', 'name')}
         />
         name
       </label>
@@ -41,7 +60,7 @@ export default function ColumnSwitch() {
           id="githubColumn"
           type="checkbox"
           checked={isGithubColumnVisible}
-          onChange={e => handleCheckboxChange(e, 'isGithubColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isGithubColumnVisible', 'github')}
         />
         github
       </label>
@@ -50,7 +69,7 @@ export default function ColumnSwitch() {
           id="emailColumn"
           type="checkbox"
           checked={isEmailColumnVisible}
-          onChange={e => handleCheckboxChange(e, 'isEmailColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isEmailColumnVisible', 'email')}
         />
         email
       </label>
@@ -59,7 +78,7 @@ export default function ColumnSwitch() {
           id="locationColumn"
           type="checkbox"
           checked={isLocationColumnVisible}
-          onChange={e => handleCheckboxChange(e, 'isLocationColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isLocationColumnVisible', 'location')}
         />
         location
       </label>
@@ -68,7 +87,7 @@ export default function ColumnSwitch() {
           id="roleColumn"
           type="checkbox"
           checked={isRoleColumnVisible}
-          onChange={e => handleCheckboxChange(e, 'isRoleColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isRoleColumnVisible', 'role')}
         />
         role
       </label>
@@ -77,7 +96,7 @@ export default function ColumnSwitch() {
           id="activeColumn"
           type="checkbox"
           checked={isActiveColumnVisible}
-          onChange={e => handleCheckboxChange(e, 'isActiveColumnVisible')}
+          onChange={e => handleCheckboxChange(e, 'isActiveColumnVisible', 'isActive')}
         />
         active members
       </label>
