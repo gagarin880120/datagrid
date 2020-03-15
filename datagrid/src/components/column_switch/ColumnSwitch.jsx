@@ -46,6 +46,7 @@ export default function ColumnSwitch() {
 
   return (
     <div className={styles.wrapper}>
+      Visible columns:
       <label htmlFor="nameColumn">
         <input
           id="nameColumn"

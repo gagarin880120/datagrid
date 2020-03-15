@@ -10,7 +10,7 @@ function Table() {
   const students = useSelector(state => state.students);
   const activeArrowId = useSelector(state => state.activeArrowId);
   const isSortedBy = useSelector(state => state.isSortedBy);
-  const notVisibleColumns = useSelector(state => state.notVisibleColumns)
+  const notVisibleColumns = useSelector(state => state.notVisibleColumns);
   const dispatch = useDispatch();
   const [currentStudentsList, setCurrentStudentsList] = useState(
     parseInt(activeArrowId, 10) % 2
@@ -30,9 +30,9 @@ function Table() {
   );
   const [request, setRequest] = useState({
     name: localStorage.getItem('nameRequest') || '',
-    github: '',
-    email: '',
-    location: ''
+    github: localStorage.getItem('githubRequest') || '',
+    email: localStorage.getItem('emailRequest') || '',
+    location: localStorage.getItem('locationRequest') || ''
   });
   const [isFilteredByString, setIsFilteredByString] = useState(
     localStorage.getItem('isFilteredByString')
@@ -132,7 +132,11 @@ function Table() {
   }
 
   function onResetButtonClick(field) {
+    if (!request[field]) {
+      return;
+    }
     setRequest(Object.assign({ [field]: '' }));
+    localStorage.setItem(`${field}Request`, '');
     let array = filterByRequest('', field);
     if (isChecked && isFilteredByRole) {
       array = filterByRole(array, roleFilteredBy).filter(item => item.isActive);
@@ -244,9 +248,9 @@ function Table() {
 
   function onlyVisible(arr, keys) {
     const array = JSON.stringify(arr);
-    const newArr = JSON.parse(array)
-    for(let i = 0; i < keys.length; i++) {
-      newArr.forEach(item => delete item[keys[i]])
+    const newArr = JSON.parse(array);
+    for (let i = 0; i < keys.length; i++) {
+      newArr.forEach(item => delete item[keys[i]]);
     }
     return newArr;
   }
@@ -274,25 +278,31 @@ function Table() {
         currentStudentsList={currentStudentsList}
         setCurrentStudentsList={setCurrentStudentsList}
       />
-      <FixedSizeList height={500} width={1250} itemSize={20} itemCount={currentStudentsList.length}>
+      <FixedSizeList height={500} width={1280} itemSize={25} itemCount={currentStudentsList.length}>
         {ListRow}
       </FixedSizeList>
-      <button onClick={() => {
-        const data = onlyVisible(currentStudentsList, notVisibleColumns);
-        const fileName = 'download'
-        const exportType = 'csv'
-        exportFromJSON({ data, fileName, exportType })
-      }}>
-        Download as CSV
-      </button>
-      <button onClick={() => {
-        const data = onlyVisible(currentStudentsList, notVisibleColumns);
-        const fileName = 'download'
-        const exportType = 'xls'
-        exportFromJSON({ data, fileName, exportType })
-      }}>
-        Download as XLS
-      </button>
+      <div className={styles.buttonsContainer}>
+        <button
+          onClick={() => {
+            const data = onlyVisible(currentStudentsList, notVisibleColumns);
+            const fileName = 'download';
+            const exportType = 'csv';
+            exportFromJSON({ data, fileName, exportType });
+          }}
+        >
+          Download as CSV
+        </button>
+        <button
+          onClick={() => {
+            const data = onlyVisible(currentStudentsList, notVisibleColumns);
+            const fileName = 'download';
+            const exportType = 'xls';
+            exportFromJSON({ data, fileName, exportType });
+          }}
+        >
+          Download as XLS
+        </button>
+      </div>
     </div>
   );
 }

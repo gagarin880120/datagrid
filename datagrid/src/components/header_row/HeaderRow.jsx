@@ -36,7 +36,7 @@ export default function HeaderRow(props) {
   }
 
   const activeArrowStyles = {
-    color: 'red'
+    color: '#A65F30	'
   };
 
   return (
@@ -143,6 +143,7 @@ export default function HeaderRow(props) {
               reset
             </button>
           </Modal>
+          <br />
           <button
             className={styles.search}
             onClick={() => {
@@ -231,6 +232,7 @@ export default function HeaderRow(props) {
               reset
             </button>
           </Modal>
+          <br />
           <button
             className={styles.search}
             onClick={() => {
@@ -319,6 +321,7 @@ export default function HeaderRow(props) {
               reset
             </button>
           </Modal>
+          <br />
           <button
             className={styles.search}
             onClick={() => {
@@ -407,6 +410,7 @@ export default function HeaderRow(props) {
               reset
             </button>
           </Modal>
+          <br />
           <button
             className={styles.search}
             onClick={() => {

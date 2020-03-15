@@ -12,11 +12,11 @@ export default function HeaderRow(props) {
   const isActiveColumnVisible = useSelector(state => state.isActiveColumnVisible);
 
   const activeItemStyles = {
-    background: '#7fffd4'
+    background: '#BCF5EB'
   };
 
   const activeRowStyles = {
-    background: '#ff00ff'
+    background: '#FFBF93'
   };
 
   return (
