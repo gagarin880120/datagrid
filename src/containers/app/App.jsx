@@ -6,7 +6,9 @@ import ColumnSwitch from '../../components/column_switch/ColumnSwitch';
 function App() {
   return (
     <div className={styles.wrapper}>
-      <p className={styles.devToolsText}>To show redux developer tools press Ctrl+h</p>
+      <p className={styles.devToolsText}>
+        To show redux developer tools press Ctrl+h, to replace - Ctrl+q
+      </p>
       <ColumnSwitch />
       <Table />
     </div>
