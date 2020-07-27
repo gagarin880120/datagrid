@@ -1,0 +1,12 @@
+.wrapper {
+  border: 1px solid rgb(73, 71, 71);
+  outline: 0;
+}
+
+.buttonsContainer {
+  position: absolute;
+  bottom: 20px;
+  width: 250px;
+  display: flex;
+  justify-content: space-between;
+}
